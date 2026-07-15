@@ -1,0 +1,14 @@
+apiVersion: v2
+name: dronzer
+description: Enterprise AI Gateway
+type: application
+version: 1.0.1
+appVersion: "1.0.1"
+keywords:
+  - ai
+  - gateway
+  - llm
+  - openai
+maintainers:
+  - name: Dronzer Core Team
+    email: core@dronzer.ai

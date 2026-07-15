@@ -1,0 +1,35 @@
+name: Dronzer CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'prompts/**'
+      - 'workflows/**'
+
+jobs:
+  deploy-ai-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Dronzer CLI
+        run: |
+          pip install dronzer-cli
+          dronzer login --token ${{ secrets.DRONZER_API_TOKEN }}
+
+      - name: Deploy Prompts
+        run: |
+          for prompt_file in prompts/*.jinja; do
+            echo "Deploying $prompt_file to Dronzer Registry..."
+            dronzer prompts push $prompt_file -m "Automated deployment via CI/CD"
+          done
+
+      - name: Deploy Workflows
+        run: |
+          for wf_file in workflows/*.yaml; do
+            echo "Deploying $wf_file to Dronzer..."
+            # dronzer workflows push $wf_file
+          done

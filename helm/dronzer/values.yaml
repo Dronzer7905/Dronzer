@@ -1,0 +1,65 @@
+replicaCount: 3
+
+api:
+  image:
+    repository: dronzer/api
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+
+worker:
+  replicaCount: 2
+  image:
+    repository: dronzer/worker
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: dronzer/dashboard
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+env:
+  ENVIRONMENT: "production"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: api.dronzer.ai
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: dashboard.dronzer.ai
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: dronzer-tls
+      hosts:
+        - api.dronzer.ai
+        - dashboard.dronzer.ai

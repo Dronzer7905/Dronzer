@@ -1,0 +1,84 @@
+# System
+.DS_Store
+Thumbs.db
+*.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node / Frontend
+node_modules/
+.next/
+out/
+build/
+dist/
+.npm/
+
+# Dronzer DB Files (if local SQLite was ever used)
+*.db
+*.sqlite3
+
+# Credentials & Keys
+*.pem
+*.key
+*.cert

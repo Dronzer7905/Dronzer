@@ -1,0 +1,61 @@
+{
+  "name": "dronzer-vscode",
+  "displayName": "Dronzer Platform",
+  "description": "Official VS Code extension for the Dronzer Enterprise AI Platform.",
+  "version": "1.0.0",
+  "publisher": "dronzer",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Programming Languages",
+    "Snippets",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onView:dronzer-explorer"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dronzer-explorer",
+          "title": "Dronzer",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "dronzer-explorer": [
+        {
+          "id": "dronzer.prompts",
+          "name": "Prompt Registry"
+        },
+        {
+          "id": "dronzer.workflows",
+          "name": "AI Workflows"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "dronzer.login",
+        "title": "Dronzer: Login"
+      },
+      {
+        "command": "dronzer.pushPrompt",
+        "title": "Dronzer: Push Prompt to Registry"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  }
+}
