@@ -31,9 +31,7 @@ class GlobalScheduler:
         logger.info(f"Enqueueing global job {job_id}", queue=queue_name, priority=priority)
 
         # 1. Determine optimal cluster region via Router
-        await self.router.route_request(
-            {"requires_gpu": payload.get("needs_gpu", False)}
-        )
+        await self.router.route_request({"requires_gpu": payload.get("needs_gpu", False)})
 
         # 2. Push to Redis queue specific to that node/region
         # e.g., await self.redis.zadd(f"queue:{target_node}", {job_id: priority})

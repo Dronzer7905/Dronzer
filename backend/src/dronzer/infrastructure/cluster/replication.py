@@ -36,7 +36,6 @@ class ReplicationEngine:
             "Broadcasting DB Mutation for replication", table=table_name, record_id=record_id
         )
 
-
         if self.bus:
             # Publish to the distributed Agent Message Bus (Redis Streams / Kafka)
             # await self.bus.publish("dronzer.replication.sync", event)
