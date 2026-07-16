@@ -14,7 +14,7 @@ app = create_app()
 
 
 @pytest.mark.asyncio
-@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+@patch("dronzer.infrastructure.database.core.async_session_factory")
 async def test_openai_chat_completion_compatibility(mock_factory):
     """
     Validates that the Gateway perfectly mocks the OpenAI /chat/completions endpoint

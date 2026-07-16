@@ -37,8 +37,16 @@ def test_admin_orgs_list():
     assert isinstance(response.json(), list)
 
 
-def test_admin_providers_list():
+from unittest.mock import AsyncMock, patch
+
+@patch("dronzer.infrastructure.database.core.async_session_factory")
+def test_admin_providers_list(mock_factory):
     from dronzer.application.registry.provider import ProviderRegistry
+
+    # Mock the DB session
+    mock_session = AsyncMock()
+    mock_factory.return_value.__aenter__.return_value = mock_session
+    mock_session.execute.return_value.scalars.return_value.all.return_value = []
 
     app.state.provider_registry = ProviderRegistry()
     response = client.get("/admin/providers")

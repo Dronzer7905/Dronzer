@@ -31,7 +31,7 @@ def test_auth_middleware_blocks_unauthorized():
 from unittest.mock import AsyncMock, MagicMock, patch
 
 
-@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+@patch("dronzer.infrastructure.database.core.async_session_factory")
 def test_auth_middleware_allows_authorized(mock_factory):
     # Pass a bearer token (even a fake one) to test the middleware allows it through
     # We mock the state for the test
@@ -60,7 +60,7 @@ def test_auth_middleware_allows_authorized(mock_factory):
     assert isinstance(data["data"], list)
 
 
-@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+@patch("dronzer.infrastructure.database.core.async_session_factory")
 def test_validation_error_format(mock_factory):
     # Pass bad data to an endpoint to verify OpenAI-compatible 400 responses
     # We mock the pipeline state
