@@ -42,7 +42,7 @@ source venv/bin/activate          # Linux/macOS
 # venv\Scripts\activate           # Windows
 
 # Install all dependencies (including dev extras)
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 ### Configure Environment

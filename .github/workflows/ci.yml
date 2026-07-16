@@ -12,36 +12,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python 3.12
+    - name: Set up Python 3.13
       uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: "3.13"
         cache: "pip"
-
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Install dependencies
       working-directory: ./backend
-      run: poetry install
+      run: pip install -e ".[dev]"
 
-    - name: Run Black (Formatting)
+    - name: Run Ruff (Formatting)
       working-directory: ./backend
-      run: poetry run black --check .
+      run: ruff format --check .
 
     - name: Run Ruff (Linting)
       working-directory: ./backend
-      run: poetry run ruff check .
+      run: ruff check .
 
     - name: Run MyPy (Type Checking)
       working-directory: ./backend
-      run: poetry run mypy src
+      run: mypy src
 
     - name: Run Pytest
       working-directory: ./backend
-      run: poetry run pytest --cov=src
+      run: pytest --cov=src
 
   security-scan:
     runs-on: ubuntu-latest
