@@ -101,7 +101,11 @@ async def login(request: LoginRequest, session: AsyncSession = Depends(get_db_se
     result = await session.execute(stmt)
     user = result.scalar_one_or_none()
 
-    if user and user.is_active and auth_service.verify_password(request.password, user.hashed_password):
+    if (
+        user
+        and user.is_active
+        and auth_service.verify_password(request.password, user.hashed_password)
+    ):
         # We assume if they're logging into the admin dashboard, they should be a superuser
         # or we check their roles here. For now, we just grant the SUPER_ADMIN role if they are a superuser.
         role = "SUPER_ADMIN" if user.is_superuser else "USER"
@@ -113,9 +117,7 @@ async def login(request: LoginRequest, session: AsyncSession = Depends(get_db_se
                 detail="User does not have admin privileges",
             )
 
-        access_token = auth_service.create_access_token(
-            data={"sub": request.email, "role": role}
-        )
+        access_token = auth_service.create_access_token(data={"sub": request.email, "role": role})
         refresh_token = auth_service.create_refresh_token(subject=request.email)
 
         logger.info("Admin login successful", email=request.email)
