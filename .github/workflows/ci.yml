@@ -9,6 +9,24 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: dronzer
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: dronzer_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
     steps:
     - uses: actions/checkout@v4
 
@@ -36,7 +54,9 @@ jobs:
 
     - name: Run Pytest
       working-directory: ./backend
-      run: pytest --cov=src
+      run: |
+        alembic upgrade head
+        pytest --cov=src
 
   security-scan:
     runs-on: ubuntu-latest
