@@ -107,8 +107,8 @@ Open the **Admin Dashboard** at `http://localhost:3000` (start the frontend firs
 
 1. **Initial Setup:** On your first visit, you will be prompted to create your initial Super Admin account (email and password).
 2. Go to **Providers** → click on any provider (e.g., Groq).
-2. Click **"Add API Key"** and paste your key.
-3. The key is **encrypted at rest** using Fernet symmetric encryption — it is never stored in plain text.
+3. Click **"Add API Key"** and paste your key.
+4. The key is **encrypted at rest** using Fernet symmetric encryption — it is never stored in plain text.
 
 Free API keys for the seeded providers can be obtained here:
 
