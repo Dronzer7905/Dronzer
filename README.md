@@ -101,11 +101,12 @@ python scripts/patch_model_metadata.py
 
 > **What seeding does NOT do:** The seed scripts only create provider/model database records. They do **not** insert any API keys. You must add your own provider API keys in the next step.
 
-### Step 5 — Add Your Provider API Keys (Required)
+### Step 5 — Initial Admin Setup & API Keys
 
 Open the **Admin Dashboard** at `http://localhost:3000` (start the frontend first — see Step 6), then:
 
-1. Go to **Providers** → click on any provider (e.g., Groq).
+1. **Initial Setup:** On your first visit, you will be prompted to create your initial Super Admin account (email and password).
+2. Go to **Providers** → click on any provider (e.g., Groq).
 2. Click **"Add API Key"** and paste your key.
 3. The key is **encrypted at rest** using Fernet symmetric encryption — it is never stored in plain text.
 
