@@ -12,4 +12,4 @@ Enterprise features include:
 - Guaranteed 1-hour response times for severity 1 issues.
 - Architecture review and deployment assistance.
 
-Contact `enterprise@dronzer.ai` for more details.
+Contact `creatoransh786@gmail.com` for more details.
