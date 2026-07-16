@@ -53,11 +53,11 @@ async def test_openai_chat_completion_compatibility(mock_factory):
             async def execute(self, request, *args, **kwargs):
                 import time
 
-                from dronzer.domain.entities.chat import (
-                    ChatChoice,
+                from dronzer.presentation.schemas.openai import (
+                    ChatCompletionChoice,
+                    ChatCompletionMessage,
                     ChatCompletionResponse,
-                    ChatMessage,
-                    ChatUsage,
+                    TokenUsage,
                 )
 
                 return ChatCompletionResponse(
@@ -65,13 +65,13 @@ async def test_openai_chat_completion_compatibility(mock_factory):
                     created=int(time.time()),
                     model="gpt-4o",
                     choices=[
-                        ChatChoice(
+                        ChatCompletionChoice(
                             index=0,
                             finish_reason="stop",
-                            message=ChatMessage(role="assistant", content="hello world"),
+                            message=ChatCompletionMessage(role="assistant", content="hello world"),
                         )
                     ],
-                    usage=ChatUsage(prompt_tokens=10, completion_tokens=10, total_tokens=20),
+                    usage=TokenUsage(prompt_tokens=10, completion_tokens=10, total_tokens=20),
                 )
 
         app.state.pipeline = MockPipeline()
