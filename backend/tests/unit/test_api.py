@@ -65,7 +65,8 @@ def test_validation_error_format(mock_factory):
     # Pass bad data to an endpoint to verify OpenAI-compatible 400 responses
     # We mock the pipeline state
     class MockPipeline:
-        pass
+        async def process_request(self, *args, **kwargs):
+            pass
 
     app.state.pipeline = MockPipeline()
 

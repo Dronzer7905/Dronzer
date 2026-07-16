@@ -50,7 +50,9 @@ async def test_openai_chat_completion_compatibility(mock_factory):
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         # We need to mock the pipeline otherwise it will try to call real OpenAI
         class MockPipeline:
-            async def execute(self, request, *args, **kwargs):
+            async def process_request(
+                self, tenant_id, payload, session, state_dict, *args, **kwargs
+            ):
                 import time
 
                 from dronzer.presentation.schemas.openai import (
