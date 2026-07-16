@@ -1,33 +1,91 @@
 # Dronzer AI Gateway — Configuration System Architecture
 
-**Document Status:** ✅ Approved  
-**Version:** 1.0  
-**Approved Date:** July 8, 2026  
+**Document Status:** ✅ Approved
+**Version:** 1.0
+**Last Updated:** July 2026
 
-> Full document available in conversation artifacts. This is the permanent reference summary.
+---
+
+## Overview
+
+The Configuration System is the **control plane** of the Dronzer Gateway. It ensures that every behavioral setting — routing rules, provider keys, rate limits, plugin toggles — is applied instantly, without restarting the server, and with full audit history.
+
+---
 
 ## Core Philosophy
-- **Dynamic & Restart-less:** Changes to configuration apply instantly via an event bus.
-- **Cache-Driven:** The proxy hot path reads strictly from an O(1) in-memory cache, never from the DB.
-- **Safe Execution:** Strict schema validation and referential integrity checks on write.
+
+| Principle | Description |
+|---|---|
+| **Dynamic & Restart-less** | Configuration changes propagate instantly via the internal event bus — no `kill -HUP` or pod restarts required. |
+| **Cache-Driven Hot Path** | The gateway proxy hot path reads strictly from an in-memory O(1) cache. The database is never queried during request processing. |
+| **Safe Execution** | All writes undergo strict schema validation (Pydantic) and referential integrity checks before being committed. |
+| **Fail-Open Reads** | If PostgreSQL is unreachable, the gateway continues routing using the last known good cached configuration. |
+
+---
 
 ## Configuration Hierarchy
-Precedence order:
-1. Emergency Override
-2. Runtime Override (Header-based)
-3. Project Override
-4. Organization Override
-5. Provider Override
-6. Global Settings
-7. Environment Variables (Secrets & Bootstrap only)
-8. Code Defaults
 
-## Hot Reload & Reliability
-- **Write-Through Caching:** DB writes instantly update local cache and broadcast a targeted `ConfigChangedEvent`.
-- **Periodic Sync:** A 60s background task verifies cache hash against DB to prevent drift.
-- **Fail-Open Reads:** If the DB is unreachable, the gateway continues routing using the last known good cached configuration.
+Settings are applied in strict precedence order — higher levels override lower ones:
 
-## Approved Open Decisions
-- **Runtime Overrides:** Permitted via HTTP headers if `allow_consumer_routing_overrides` is enabled.
-- **Draft/Publish Workflow:** Direct publishing for v1.0. Draft workflows deferred to v2.
-- **Multi-Tenant Strictness:** Org settings act as Hard Limits for quotas and Defaults for behaviors.
+```
+1. Emergency Override          ← Highest priority (operator kill-switch)
+2. Runtime Override            ← Per-request HTTP header override (if enabled)
+3. Project Override            ← Specific to a Project within an Organization
+4. Organization Override       ← Applies to all Projects in an Organization
+5. Provider Override           ← Specific to a provider (e.g., always use GPT-4o for Org A)
+6. Global Settings             ← Platform-wide defaults
+7. Environment Variables       ← Secrets and bootstrap config only (not routing logic)
+8. Code Defaults               ← Lowest priority — hardcoded fallbacks
+```
+
+---
+
+## Hot Reload Mechanism
+
+The hot-reload flow ensures zero downtime when configuration changes:
+
+```
+Admin writes config change (via Dashboard or API)
+        │
+        ▼
+Pydantic schema validation + DB referential integrity check
+        │
+        ▼
+SQLAlchemy async write to PostgreSQL
+        │
+        ▼
+Write-Through Cache update (local in-memory cache updated immediately)
+        │
+        ▼
+ConfigChangedEvent emitted on internal event bus
+        │
+        ▼
+All subscribed subsystems (Router, HealthEngine, PluginOrchestrator) reload affected config
+```
+
+A 60-second background task additionally verifies the local cache hash against the database to detect and correct any potential drift.
+
+---
+
+## Configuration Domains
+
+| Domain | What It Controls |
+|---|---|
+| Provider Settings | Base URLs, authentication scheme, timeout values |
+| Model Settings | Capability flags, context window, cost-per-token |
+| Routing Rules | Priority order, strategy (priority/round-robin/weighted), fallback chains |
+| API Key Settings | Budget limits, RPM quotas, task-type restrictions |
+| Rate Limiting | Sliding-window sizes per key, per project, per organization |
+| Plugin Settings | Enabled/disabled state, capability grants |
+| Health Engine | Circuit breaker thresholds, cooldown durations |
+
+---
+
+## Approved Decisions
+
+| Decision | Choice |
+|---|---|
+| Runtime header overrides | Permitted if `allow_consumer_routing_overrides = true` in Project config |
+| Draft/publish workflow | Direct publishing for v1.0; draft → review → publish deferred to v2 |
+| Multi-tenant scope | Organization settings act as **hard limits** for quotas and **defaults** for behaviors |
+| Cache invalidation granularity | Targeted per-entity invalidation (not full flush) to minimize disruption |

@@ -1,34 +1,64 @@
 # Dronzer AI Gateway — Implementation Specification Roadmap
 
-**Document Status:** ✅ Approved  
-**Version:** 1.0  
-**Approved Date:** July 8, 2026  
+**Document Status:** ✅ Approved
+**Version:** 1.0
+**Last Updated:** July 2026
 
-> Full document available in conversation artifacts. This is the permanent reference summary.
+---
 
-## Phase Breakdown (20 Steps)
-1. Repository Foundation
-2. Core Framework (FastAPI, settings, logging)
-3. Database Layer (SQLAlchemy, Alembic, Base Models)
-4. Dependency Injection (Containers, Factories)
-5. Configuration System (DB loading, caching, event bus)
-6. Plugin Framework (Hooks, Loader)
-7. Provider SDK (Interfaces for OpenAI, Anthropic adapters)
-8. OpenAI Compatibility API (REST layer, Pydantic models)
-9. Routing Engine (Groups, Rules execution)
-10. API Key Rotation (Health, Quota tracking)
-11. Model Selection (Capabilities, Scoring)
-12. Provider Failover (Circuit breakers, Retries)
-13. Health Engine (Sliding windows, status probes)
-14. Dashboard Backend (Admin CRUD APIs)
-15. Dashboard Frontend (Next.js scaffold, Auth)
-16. Authentication (Consumer keys, Admin sessions)
-17. RBAC (Roles, Permissions)
-18. Metrics & Observability (Prometheus, Structlog)
-19. Deployment (Docker, Helm charts)
-20. Production Hardening (Stress testing, Security audits)
+## Overview
 
-## Quality Gates
-- 90% Unit test coverage minimum.
-- Static analysis (Ruff) and strict type checking (Mypy) must pass.
-- Clean Architecture boundaries must be enforced.
+This document describes the 20-phase implementation specification that guided the development of Dronzer v2.0. Each phase represents a discrete, independently testable increment of the system.
+
+---
+
+## Phase Breakdown
+
+| Phase | Name | Description |
+|---|---|---|
+| 1 | **Repository Foundation** | Monorepo structure, pyproject.toml, Next.js scaffold, .gitignore, pre-commit hooks |
+| 2 | **Core Framework** | FastAPI app factory, structured logging (structlog), settings management (pydantic-settings) |
+| 3 | **Database Layer** | SQLAlchemy 2.0 async engine, Alembic migrations, Base models, session factory |
+| 4 | **Dependency Injection** | Composition root (`dependencies.py`), factory functions, async lifespan management |
+| 5 | **Configuration System** | Database-driven config loading, in-memory hot cache, event bus (`ConfigChangedEvent`) |
+| 6 | **Plugin Framework** | Plugin loader, `ExtensionBase` interface, pre/post-process hooks, sandbox |
+| 7 | **Provider SDK** | Abstract `ProviderAdapter` port, OpenAI and Anthropic adapter implementations |
+| 8 | **OpenAI Compatibility API** | `/v1/chat/completions`, `/v1/embeddings`, `/v1/models` routes with Pydantic schemas |
+| 9 | **Routing Engine** | Routing group resolution, rule execution, `ExecutionPlan` builder |
+| 10 | **API Key Rotation** | Key pool management, health scoring, LRU/Priority/Weighted strategies |
+| 11 | **Model Selection** | Capability filtering, composite scoring engine, audit trace generation |
+| 12 | **Provider Failover** | Circuit breaker per provider, retry orchestrator, transparent error masking |
+| 13 | **Health Engine** | Sliding-window health tracking (provider, model, key), status probes |
+| 14 | **Dashboard Backend** | Admin CRUD APIs (`/api/v1/`): providers, models, keys, policies, organizations |
+| 15 | **Dashboard Frontend** | Next.js Light Theme scaffold, sidebar layout, auth flow, API client setup |
+| 16 | **Authentication** | Consumer key HMAC validation middleware, admin JWT session management |
+| 17 | **RBAC** | Organization → Project → Key hierarchy, role definitions, permission checks |
+| 18 | **Metrics & Observability** | Prometheus metrics at `/metrics`, Grafana dashboard provisioning, request trace logging |
+| 19 | **Deployment** | Docker Compose (dev + prod), Kubernetes Helm chart, GitHub Actions CI/CD |
+| 20 | **Production Hardening** | Load testing (wrk), security audit, rate limit tuning, memory profiling |
+
+---
+
+## Quality Gates (All Phases)
+
+Every phase must satisfy:
+
+- **Unit Test Coverage:** ≥90% for all new modules.
+- **Static Analysis:** `ruff check .` must pass with zero warnings.
+- **Type Checking:** `mypy .` must pass in strict mode.
+- **Clean Architecture:** No cross-layer import violations (enforced by ruff import rules).
+- **Migration Safety:** Every schema change must have a corresponding Alembic migration (append-only).
+
+---
+
+## Seed Scripts (Post-Phase 3)
+
+After Phase 3 (Database Layer) is complete, the seed scripts become runnable:
+
+```bash
+# Required after running: alembic upgrade head
+python scripts/seed_free_providers.py     # Phase 3+
+python scripts/patch_model_metadata.py   # Phase 11+
+```
+
+These scripts must remain idempotent across all future schema changes.
