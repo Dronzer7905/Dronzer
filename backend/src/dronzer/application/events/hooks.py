@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import structlog
@@ -7,7 +7,7 @@ import structlog
 logger = structlog.get_logger("dronzer.events.hooks")
 
 
-class HookPoint(str, Enum):
+class HookPoint(StrEnum):
     """
     Standard lifecycle points where extensions can inject logic.
     """

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from dronzer.infrastructure.database.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 
 
-class PackageType(str, enum.Enum):
+class PackageType(enum.StrEnum):
     PLUGIN = "PLUGIN"
     PROVIDER = "PROVIDER"
     WORKFLOW = "WORKFLOW"

@@ -1,7 +1,8 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
-from dronzer.core.main import app
+from httpx import ASGITransport, AsyncClient
+
 from dronzer.core.exceptions import ConfigurationException
+from dronzer.core.main import app
 
 
 @pytest.mark.asyncio

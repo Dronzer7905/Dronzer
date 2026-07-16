@@ -1,14 +1,14 @@
+from datetime import UTC, datetime, timedelta
 from typing import Any
-from datetime import datetime, timedelta, UTC
 
 import structlog
 from fastapi import APIRouter, Depends, Request
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, text
 
 from dronzer.infrastructure.database.core import get_db_session
-from dronzer.infrastructure.database.models.telemetry import RequestLog
 from dronzer.infrastructure.database.models.ai import Provider
+from dronzer.infrastructure.database.models.telemetry import RequestLog
 
 logger = structlog.get_logger("dronzer.api.admin.health")
 router = APIRouter(prefix="/health", tags=["Admin Health"])

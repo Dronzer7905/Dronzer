@@ -15,9 +15,10 @@ from pathlib import Path
 # Ensure the src directory is on the path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from dronzer.infrastructure.database.core import get_db_session, engine
-from dronzer.infrastructure.database.models.ai import Provider, Model
 from sqlalchemy import select
+
+from dronzer.infrastructure.database.core import engine, get_db_session
+from dronzer.infrastructure.database.models.ai import Model, Provider
 
 # ---------------------------------------------------------------------------
 # Data from Free_LLM_Providers_Verified_Jul2026.csv

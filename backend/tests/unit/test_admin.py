@@ -1,9 +1,8 @@
-import pytest
 from fastapi.testclient import TestClient
 
-from dronzer.presentation.api.server import create_app
+from dronzer.domain.admin.rbac import Permission, Role, has_permission
 from dronzer.presentation.api.admin.router import admin_router
-from dronzer.domain.admin.rbac import Role, Permission, has_permission
+from dronzer.presentation.api.server import create_app
 
 # Attach the admin router for the test
 app = create_app()

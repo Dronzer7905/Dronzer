@@ -18,7 +18,7 @@ async def list_plugins(request: Request) -> list[dict[str, Any]]:
         return []
 
     results = []
-    for name, plugin in loader._loaded_plugins.items():
+    for _name, plugin in loader._loaded_plugins.items():
         meta = plugin.metadata
         results.append(
             {

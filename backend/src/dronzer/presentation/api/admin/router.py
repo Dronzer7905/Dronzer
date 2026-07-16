@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from dronzer.presentation.api.admin import (
     auth,
+    gateway_keys,
     health,
     keys,
     models,
@@ -9,7 +10,6 @@ from dronzer.presentation.api.admin import (
     plugins,
     projects,
     providers,
-    gateway_keys,
 )
 from dronzer.presentation.api.admin.deps import get_current_admin
 

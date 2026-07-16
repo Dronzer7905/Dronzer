@@ -8,14 +8,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from dronzer.infrastructure.database.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 
 
-class ClusterRole(str, enum.Enum):
+class ClusterRole(enum.StrEnum):
     PRIMARY = "PRIMARY"
     SECONDARY = "SECONDARY"
     REPLICA = "REPLICA"
     DISASTER_RECOVERY = "DISASTER_RECOVERY"
 
 
-class NodeStatus(str, enum.Enum):
+class NodeStatus(enum.StrEnum):
     ACTIVE = "ACTIVE"
     DRAINING = "DRAINING"
     MAINTENANCE = "MAINTENANCE"

@@ -63,6 +63,5 @@ class QuotaEngine:
         """
         Commits actual token usage post-request.
         """
-        key = f"quota:tokens:month:{project_id}"
         # await self.cache.increment(key, amount=actual_tokens, ttl=2592000) # 30 days
         logger.debug(f"Recorded {actual_tokens} tokens for project {project_id}")

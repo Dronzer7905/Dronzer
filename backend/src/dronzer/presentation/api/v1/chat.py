@@ -1,13 +1,12 @@
 import json
 
 import structlog
-from fastapi import APIRouter, BackgroundTasks, Request, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dronzer.infrastructure.database.core import get_db_session
-
 from dronzer.application.orchestration.pipeline import RequestPipeline
+from dronzer.infrastructure.database.core import get_db_session
 from dronzer.presentation.schemas.openai import ChatCompletionRequest, ChatCompletionResponse
 
 # In a real DI setup, we'd inject this via Depends.
@@ -56,7 +55,7 @@ async def chat_completions(
     """
     # Grab the pipeline from app state (injected during startup)
     pipeline: RequestPipeline = request.app.state.pipeline
-    auth_token = getattr(request.state, "api_key", "")
+    getattr(request.state, "api_key", "")
 
     # Convert Pydantic model back to dict for the pipeline
     payload = body.model_dump(exclude_unset=True)

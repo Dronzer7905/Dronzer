@@ -38,7 +38,9 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
         # Phase 15: Strict Database Validation
         import hashlib
+
         from sqlalchemy import select
+
         from dronzer.infrastructure.database.core import async_session_factory
         from dronzer.infrastructure.database.models.gateway import GatewayKey
 

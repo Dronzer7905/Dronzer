@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Permission(str, Enum):
+class Permission(StrEnum):
     # Global Admin
     MANAGE_SYSTEM = "system:manage"
     VIEW_SYSTEM = "system:view"
@@ -29,7 +29,7 @@ class Permission(str, Enum):
     VIEW_AUDIT = "audit:view"
 
 
-class Role(str, Enum):
+class Role(StrEnum):
     SUPER_ADMIN = "SUPER_ADMIN"
     ORG_OWNER = "ORG_OWNER"
     ORG_ADMIN = "ORG_ADMIN"
@@ -39,7 +39,7 @@ class Role(str, Enum):
 
 
 ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
-    Role.SUPER_ADMIN: [p for p in Permission],
+    Role.SUPER_ADMIN: list(Permission),
     Role.ORG_OWNER: [
         Permission.MANAGE_ORG,
         Permission.VIEW_ORG,

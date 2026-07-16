@@ -1,7 +1,8 @@
 import asyncio
 import uuid
-from dronzer.infrastructure.database.core import get_db_session, engine
-from dronzer.infrastructure.database.models.ai import Provider, Model, APIKey
+
+from dronzer.infrastructure.database.core import engine, get_db_session
+from dronzer.infrastructure.database.models.ai import APIKey, Model, Provider
 
 
 async def seed():
@@ -16,9 +17,10 @@ async def seed():
         await session.execute(text("DELETE FROM organizations;"))
         await session.flush()
 
+        import hashlib
+
         from dronzer.infrastructure.database.models.gateway import GatewayKey
         from dronzer.infrastructure.database.models.tenant import Organization
-        import hashlib
 
         # Create an organization first
         org = Organization(name="Test Org", slug="test-org")
@@ -26,7 +28,7 @@ async def seed():
         await session.flush()
 
         # Add a dummy gateway key "sk-test-dronzer"
-        hashed = hashlib.sha256("sk-test-dronzer".encode()).hexdigest()
+        hashed = hashlib.sha256(b"sk-test-dronzer").hexdigest()
         gk = GatewayKey(hashed_key=hashed, label="Test Gateway Key", organization_id=org.id)
         session.add(gk)
 

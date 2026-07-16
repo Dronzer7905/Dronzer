@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from dronzer.presentation.api.server import create_app

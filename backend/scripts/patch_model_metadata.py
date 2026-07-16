@@ -10,9 +10,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from dronzer.infrastructure.database.core import get_db_session, engine
-from dronzer.infrastructure.database.models.ai import Model
 from sqlalchemy import select
+
+from dronzer.infrastructure.database.core import engine, get_db_session
+from dronzer.infrastructure.database.models.ai import Model
 
 METADATA = {
     # GROQ

@@ -1,10 +1,10 @@
 import uuid
-from pydantic import BaseModel
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from dronzer.infrastructure.database.core import get_db_session
 from dronzer.infrastructure.database.models.ai import APIKey, Provider

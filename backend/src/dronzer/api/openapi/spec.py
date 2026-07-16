@@ -17,8 +17,8 @@ def custom_openapi(app: FastAPI) -> dict[str, Any]:
         version="1.0.0",
         description="""
         Welcome to the official Dronzer Platform API.
-        
-        This API allows developers to automate AI Workflows, manage Prompts, 
+
+        This API allows developers to automate AI Workflows, manage Prompts,
         trigger LLMOps Evaluations, and integrate Dronzer into their CI/CD pipelines.
         """,
         routes=app.routes,

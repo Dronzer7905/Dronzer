@@ -27,12 +27,11 @@ class LLMNodeExecutor(BaseNodeExecutor):
     """
 
     async def run(self, parameters: dict[str, Any], global_state: dict[str, Any]) -> dict[str, Any]:
-        prompt_template = parameters.get("prompt", "")
+        parameters.get("prompt", "")
         model = parameters.get("model", "gpt-4-turbo")
 
         # Hydrate template with global state variables
         # (e.g. replacing {{user_input}} with global_state["user_input"])
-        hydrated_prompt = prompt_template  # ... Template hydration logic
 
         logger.info("Executing LLM Node", model=model)
 

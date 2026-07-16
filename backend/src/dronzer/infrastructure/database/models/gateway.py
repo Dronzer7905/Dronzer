@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, String, JSON
+from sqlalchemy import JSON, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from dronzer.infrastructure.database.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin

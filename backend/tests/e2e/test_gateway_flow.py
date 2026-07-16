@@ -1,6 +1,7 @@
-import pytest
-import httpx
 import os
+
+import httpx
+import pytest
 
 # Ensure the Gateway is running on localhost:8000 before executing E2E tests
 GATEWAY_URL = os.getenv("DRONZER_GATEWAY_URL", "http://localhost:8000/v1")

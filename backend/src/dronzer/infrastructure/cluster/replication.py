@@ -36,13 +36,6 @@ class ReplicationEngine:
             "Broadcasting DB Mutation for replication", table=table_name, record_id=record_id
         )
 
-        event = {
-            "type": "db_replication",
-            "table": table_name,
-            "action": action,
-            "record_id": record_id,
-            "payload": payload,
-        }
 
         if self.bus:
             # Publish to the distributed Agent Message Bus (Redis Streams / Kafka)

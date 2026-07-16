@@ -27,9 +27,9 @@ class BenchmarkEngine:
         for model in model_identifiers:
             model_metrics = []
 
-            for prompt in test_prompts:
+            for _prompt in test_prompts:
                 # Mock execution tracing
-                start_time = time.time()
+                time.time()
                 # await self.gateway.execute(model, prompt)
                 ttft_ms = 150  # mock
                 total_time_ms = 800  # mock

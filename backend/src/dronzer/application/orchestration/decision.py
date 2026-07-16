@@ -1,5 +1,4 @@
 import structlog
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dronzer.application.orchestration.context import DecisionContext, ExecutionPlan, RequestContext

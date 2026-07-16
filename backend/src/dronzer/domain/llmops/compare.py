@@ -26,7 +26,6 @@ class ModelComparisonEngine:
 
         # Compile prompt
         # compiled_prompt = compiler.render(prompt_text, variables)
-        compiled_prompt = "Mock compiled prompt"
 
         async def _execute_model(model_name: str):
             # mock gateway execution

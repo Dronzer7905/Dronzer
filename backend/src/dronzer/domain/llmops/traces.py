@@ -35,7 +35,7 @@ class TraceEngine:
         """
         logger.info(f"Finalized trace {trace_id}")
 
-        trace_record = {
+        {
             "trace_id": trace_id,
             "timestamp": datetime.utcnow().isoformat(),
             "compiled_prompt": compiled_prompt,

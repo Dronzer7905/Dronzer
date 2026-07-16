@@ -1,6 +1,6 @@
 import importlib
+
 import structlog
-from typing import Dict, Type
 
 from dronzer.domain.sdk.provider import IProvider
 
@@ -12,7 +12,7 @@ class ProviderFactory:
     Factory for instantiating AI Provider SDKs dynamically.
     """
 
-    _registry: Dict[str, Type[IProvider]] = {}
+    _registry: dict[str, type[IProvider]] = {}
     _initialized = False
 
     @classmethod

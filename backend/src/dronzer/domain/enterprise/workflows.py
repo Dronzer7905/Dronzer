@@ -1,6 +1,6 @@
 import uuid
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import structlog
@@ -9,7 +9,7 @@ from pydantic import BaseModel
 logger = structlog.get_logger("dronzer.enterprise.workflows")
 
 
-class WorkflowStatus(str, Enum):
+class WorkflowStatus(StrEnum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"

@@ -1,13 +1,14 @@
 import uuid
+
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from dronzer.application.registry.provider import ProviderRegistry
 from dronzer.infrastructure.database.core import get_db_session
-from dronzer.infrastructure.database.models.ai import Provider, Model
+from dronzer.infrastructure.database.models.ai import Model, Provider
 from dronzer.presentation.schemas.admin import ProviderConfigResponse
 
 logger = structlog.get_logger("dronzer.api.admin.providers")

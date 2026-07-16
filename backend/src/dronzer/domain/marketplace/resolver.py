@@ -33,7 +33,6 @@ class DependencyResolver:
         # parent -> child_a (>=1.0.0), child_b (>=2.1.0)
 
         async def _dfs(pkg: str, ver_constraint: str):
-            node_key = f"{pkg}@{ver_constraint}"
 
             if pkg in resolving:
                 raise ValueError(f"Circular dependency detected involving {pkg}")

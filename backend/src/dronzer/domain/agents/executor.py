@@ -32,7 +32,7 @@ class AgentExecutor:
         logger.info(f"Agent {self.profile.name} starting task execution.")
 
         # Determine available tools for this agent based on RBAC
-        available_tools = self.tool_registry.get_available_tools(self.profile.allowed_tools)
+        self.tool_registry.get_available_tools(self.profile.allowed_tools)
 
         agent_state.current_goal = task_description
         iteration = 0
@@ -42,7 +42,7 @@ class AgentExecutor:
             logger.debug(f"Agent ReAct Iteration {iteration}")
 
             # Construct context: System Prompt + Task + Scratchpad History
-            context = self._build_context(task_description, agent_state)
+            self._build_context(task_description, agent_state)
 
             # Invoke LLM (Mocked)
             # llm_response = await self.llm.generate(context, tools=available_tools)

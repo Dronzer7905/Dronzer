@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock
+
+import pytest
 
 from dronzer.application.config.manager import ConfigurationManager
 

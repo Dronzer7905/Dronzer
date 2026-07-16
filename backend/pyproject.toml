@@ -71,7 +71,7 @@ select = [
     "B",  # flake8-bugbear
     "UP", # pyupgrade
 ]
-ignore = ["E501"]
+ignore = ["E501", "B008", "E712", "B904", "C901", "B007", "E402"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"

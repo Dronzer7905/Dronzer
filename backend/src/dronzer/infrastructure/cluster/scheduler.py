@@ -31,7 +31,7 @@ class GlobalScheduler:
         logger.info(f"Enqueueing global job {job_id}", queue=queue_name, priority=priority)
 
         # 1. Determine optimal cluster region via Router
-        target_node = await self.router.route_request(
+        await self.router.route_request(
             {"requires_gpu": payload.get("needs_gpu", False)}
         )
 
