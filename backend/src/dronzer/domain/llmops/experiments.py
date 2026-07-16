@@ -39,7 +39,9 @@ class ABExperimentEngine:
         roll = random.uniform(0, 100)
         is_challenger = roll <= float(str(experiment["traffic_split_pct"]))
 
-        target_version = str(experiment["challenger"]) if is_challenger else str(experiment["champion"])
+        target_version = (
+            str(experiment["challenger"]) if is_challenger else str(experiment["champion"])
+        )
 
         logger.debug(
             f"Traffic split decision for {prompt_name}",

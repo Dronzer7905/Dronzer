@@ -17,7 +17,9 @@ class WorkflowEngine:
 
     def __init__(self, db_session: Any = None):
         self.db = db_session
-        self.node_registry: dict[str, Any] = {}  # Mappings of string 'type' to actual Node Executor classes
+        self.node_registry: dict[
+            str, Any
+        ] = {}  # Mappings of string 'type' to actual Node Executor classes
 
     def register_node_executor(self, node_type: str, executor_class: Any):
         self.node_registry[node_type] = executor_class
@@ -92,7 +94,9 @@ class WorkflowEngine:
         await self._save_state(execution_id, state, ExecutionStatus.COMPLETED)
 
     # Database abstraction helpers
-    async def _update_status(self, execution_id: str, status: ExecutionStatus, error: str | None = None):
+    async def _update_status(
+        self, execution_id: str, status: ExecutionStatus, error: str | None = None
+    ):
         pass
 
     async def _load_state(self, execution_id: str) -> dict[str, Any] | None:

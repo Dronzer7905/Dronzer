@@ -36,7 +36,12 @@ class ToolExecutionObserver:
             self._record_metric(tool_name, tenant_id, duration_ms, status, error_msg)
 
     def _record_metric(
-        self, tool_name: str, tenant_id: str, duration_ms: float, status: str, error: str | None = None
+        self,
+        tool_name: str,
+        tenant_id: str,
+        duration_ms: float,
+        status: str,
+        error: str | None = None,
     ):
         """
         Ships the metric to the telemetry backend.

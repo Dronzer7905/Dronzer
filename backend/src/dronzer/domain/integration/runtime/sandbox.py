@@ -20,7 +20,9 @@ class SandboxEngine:
     def __init__(self, mode: str = "subprocess"):
         self.mode = mode  # 'subprocess', 'docker', 'firecracker'
 
-    async def execute_python(self, code: str, timeout_seconds: int = 10) -> tuple[str, str, int | None]:
+    async def execute_python(
+        self, code: str, timeout_seconds: int = 10
+    ) -> tuple[str, str, int | None]:
         """
         Executes Python code in an isolated subprocess.
         Returns: (stdout, stderr, exit_code)
@@ -57,7 +59,9 @@ class SandboxEngine:
         finally:
             os.remove(temp_path)
 
-    async def execute_shell(self, command: str, timeout_seconds: int = 5) -> tuple[str, str, int | None]:
+    async def execute_shell(
+        self, command: str, timeout_seconds: int = 5
+    ) -> tuple[str, str, int | None]:
         """
         Executes a shell command.
         WARNING: Highly dangerous if exposed to unprivileged agents.
