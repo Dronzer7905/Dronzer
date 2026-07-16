@@ -87,7 +87,7 @@ python scripts/seed_free_providers.py
 python scripts/patch_model_metadata.py
 ```
 
-> **🔑 API keys are NOT seeded.** After running these scripts, you must open the Admin Dashboard and manually enter your own API key for each provider. The seed scripts only register the provider name, base URL, and model list. No routing will happen until you add at least one API key per provider.
+> **🔑 API keys are NOT seeded.** After running these scripts, you must open the Admin Dashboard. On your first visit, you will be prompted to create your initial Super Admin account. After logging in, you must manually enter your own API key for each provider. The seed scripts only register the provider name, base URL, and model list. No routing will happen until you add at least one API key per provider.
 
 After seeding, the following providers will be registered and awaiting your API keys:
 
