@@ -39,6 +39,7 @@ def test_admin_orgs_list():
 
 from unittest.mock import AsyncMock, patch
 
+
 @patch("dronzer.infrastructure.database.core.async_session_factory")
 def test_admin_providers_list(mock_factory):
     from dronzer.application.registry.provider import ProviderRegistry
