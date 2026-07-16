@@ -12,6 +12,6 @@ Currently, the `2.x` branch is the active branch receiving security updates.
 
 ## Reporting a Vulnerability
 
-We take the security of the Dronzer AI Gateway very seriously. If you discover a security vulnerability (e.g., related to key encryption or backend orchestration), please send an e-mail to **security@dronzer.ai**. 
+We take the security of the Dronzer AI Gateway very seriously. If you discover a security vulnerability (e.g., related to key encryption or backend orchestration), please send an e-mail to **creatoransh786@gmail.com**. 
 
 All security vulnerabilities will be promptly addressed. Do not file public issues on GitHub for security vulnerabilities to prevent exploitation before a patch is released.
