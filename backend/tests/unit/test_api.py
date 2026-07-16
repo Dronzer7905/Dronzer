@@ -28,13 +28,15 @@ def test_auth_middleware_blocks_unauthorized():
     assert data["error"]["code"] == "missing_api_key"
 
 
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
+
 
 @patch("dronzer.presentation.api.middleware.auth.async_session_factory")
 def test_auth_middleware_allows_authorized(mock_factory):
     # Pass a bearer token (even a fake one) to test the middleware allows it through
     # We mock the state for the test
     from dronzer.application.registry.provider import ProviderRegistry
+
     app.state.provider_registry = ProviderRegistry()
 
     # Mock the DB session and result

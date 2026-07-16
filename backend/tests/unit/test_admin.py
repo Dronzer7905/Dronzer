@@ -1,17 +1,20 @@
 from fastapi.testclient import TestClient
 
 from dronzer.domain.admin.rbac import Permission, Role, has_permission
+from dronzer.presentation.api.admin.deps import get_current_admin
 from dronzer.presentation.api.admin.router import admin_router
 from dronzer.presentation.api.server import create_app
-
-from dronzer.presentation.api.admin.deps import get_current_admin
 
 # Attach the admin router for the test
 app = create_app()
 app.include_router(admin_router)
 
 # Override admin auth dependency
-app.dependency_overrides[get_current_admin] = lambda: {"sub": "test@admin.com", "role": "SUPER_ADMIN", "type": "access"}
+app.dependency_overrides[get_current_admin] = lambda: {
+    "sub": "test@admin.com",
+    "role": "SUPER_ADMIN",
+    "type": "access",
+}
 
 client = TestClient(app)
 

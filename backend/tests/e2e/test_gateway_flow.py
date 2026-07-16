@@ -1,10 +1,10 @@
 import os
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
 
 from dronzer.presentation.api.server import create_app
-from unittest.mock import patch, MagicMock, AsyncMock
 
 # Ensure the Gateway is running on localhost:8000 before executing E2E tests
 GATEWAY_URL = os.getenv("DRONZER_GATEWAY_URL", "http://localhost:8000/v1")
@@ -51,14 +51,27 @@ async def test_openai_chat_completion_compatibility(mock_factory):
         # We need to mock the pipeline otherwise it will try to call real OpenAI
         class MockPipeline:
             async def execute(self, request, *args, **kwargs):
-                from dronzer.domain.entities.chat import ChatCompletionResponse, ChatChoice, ChatMessage, ChatUsage
                 import time
+
+                from dronzer.domain.entities.chat import (
+                    ChatChoice,
+                    ChatCompletionResponse,
+                    ChatMessage,
+                    ChatUsage,
+                )
+
                 return ChatCompletionResponse(
                     id="test-id",
                     created=int(time.time()),
                     model="gpt-4o",
-                    choices=[ChatChoice(index=0, finish_reason="stop", message=ChatMessage(role="assistant", content="hello world"))],
-                    usage=ChatUsage(prompt_tokens=10, completion_tokens=10, total_tokens=20)
+                    choices=[
+                        ChatChoice(
+                            index=0,
+                            finish_reason="stop",
+                            message=ChatMessage(role="assistant", content="hello world"),
+                        )
+                    ],
+                    usage=ChatUsage(prompt_tokens=10, completion_tokens=10, total_tokens=20),
                 )
 
         app.state.pipeline = MockPipeline()
