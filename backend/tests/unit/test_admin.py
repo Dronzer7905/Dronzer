@@ -46,9 +46,10 @@ def test_admin_providers_list():
 
     # Create a mock async session where execute() is async but
     # the Result object it returns uses synchronous scalars()/all()
-    mock_session = AsyncMock(spec_set=["execute", "close", "rollback"])
+    mock_session = AsyncMock()
     mock_result = MagicMock()
     mock_result.scalars.return_value.all.return_value = []
+    mock_result.scalars.return_value.first.return_value = None
     mock_session.execute.return_value = mock_result
 
     async def override_get_db_session():
