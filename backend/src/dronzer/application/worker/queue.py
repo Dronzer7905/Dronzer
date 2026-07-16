@@ -65,7 +65,9 @@ class BackgroundWorker:
         job["failed_at"] = datetime.now(UTC).isoformat()
         import typing
 
-        await typing.cast(typing.Awaitable[Any], self.redis.lpush(self.dlq_name, json.dumps(job)))
+        await typing.cast(
+            typing.Awaitable[typing.Any], self.redis.lpush(self.dlq_name, json.dumps(job))
+        )
         logger.error("Job moved to DLQ", job_id=job["id"], error=error)
 
     async def start(self):
