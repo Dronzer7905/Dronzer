@@ -15,4 +15,4 @@ Examples of unacceptable behavior include:
 * Public or private harassment
 
 ## Enforcement
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at **conduct@dronzer.ai**. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at **creatoransh786@gmail.com**. All complaints will be reviewed and investigated promptly and fairly.
