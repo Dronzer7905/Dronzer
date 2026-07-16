@@ -28,15 +28,28 @@ def test_auth_middleware_blocks_unauthorized():
     assert data["error"]["code"] == "missing_api_key"
 
 
-def test_auth_middleware_allows_authorized():
-    # Pass a bearer token (even a fake one) to test the middleware allows it through
-    # Note: Without a mocked registry, this might return 500 if the state isn't populated,
-    # but the auth layer itself should pass.
+from unittest.mock import patch, MagicMock, AsyncMock
 
+@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+def test_auth_middleware_allows_authorized(mock_factory):
+    # Pass a bearer token (even a fake one) to test the middleware allows it through
     # We mock the state for the test
     from dronzer.application.registry.provider import ProviderRegistry
-
     app.state.provider_registry = ProviderRegistry()
+
+    # Mock the DB session and result
+    mock_session = AsyncMock()
+    mock_factory.return_value.__aenter__.return_value = mock_session
+    mock_result = MagicMock()
+    mock_db_key = MagicMock()
+    mock_db_key.id = "mock-id"
+    mock_db_key.organization_id = "org-id"
+    mock_db_key.project_id = "proj-id"
+    mock_db_key.task_type = "general"
+    mock_db_key.model_priorities = []
+    mock_db_key.provider_priorities = []
+    mock_result.scalars().first.return_value = mock_db_key
+    mock_session.execute.return_value = mock_result
 
     response = client.get("/v1/models", headers={"Authorization": "Bearer test-key"})
     assert response.status_code == 200
@@ -45,13 +58,28 @@ def test_auth_middleware_allows_authorized():
     assert isinstance(data["data"], list)
 
 
-def test_validation_error_format():
+@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+def test_validation_error_format(mock_factory):
     # Pass bad data to an endpoint to verify OpenAI-compatible 400 responses
     # We mock the pipeline state
     class MockPipeline:
         pass
 
     app.state.pipeline = MockPipeline()
+
+    # Mock the DB session and result
+    mock_session = AsyncMock()
+    mock_factory.return_value.__aenter__.return_value = mock_session
+    mock_result = MagicMock()
+    mock_db_key = MagicMock()
+    mock_db_key.id = "mock-id"
+    mock_db_key.organization_id = "org-id"
+    mock_db_key.project_id = "proj-id"
+    mock_db_key.task_type = "general"
+    mock_db_key.model_priorities = []
+    mock_db_key.provider_priorities = []
+    mock_result.scalars().first.return_value = mock_db_key
+    mock_session.execute.return_value = mock_result
 
     response = client.post(
         "/v1/chat/completions",

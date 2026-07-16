@@ -3,13 +3,19 @@ import os
 import httpx
 import pytest
 
+from dronzer.presentation.api.server import create_app
+from unittest.mock import patch, MagicMock, AsyncMock
+
 # Ensure the Gateway is running on localhost:8000 before executing E2E tests
 GATEWAY_URL = os.getenv("DRONZER_GATEWAY_URL", "http://localhost:8000/v1")
 API_KEY = os.getenv("DRONZER_E2E_API_KEY", "test-key-123")
 
+app = create_app()
+
 
 @pytest.mark.asyncio
-async def test_openai_chat_completion_compatibility():
+@patch("dronzer.presentation.api.middleware.auth.async_session_factory")
+async def test_openai_chat_completion_compatibility(mock_factory):
     """
     Validates that the Gateway perfectly mocks the OpenAI /chat/completions endpoint
     and successfully routes a standard request.
@@ -26,9 +32,38 @@ async def test_openai_chat_completion_compatibility():
         "max_tokens": 10,
     }
 
-    async with httpx.AsyncClient() as client:
+    # Mock DB session for middleware
+    mock_session = AsyncMock()
+    mock_factory.return_value.__aenter__.return_value = mock_session
+    mock_result = MagicMock()
+    mock_db_key = MagicMock()
+    mock_db_key.id = "mock-id"
+    mock_db_key.organization_id = "org-id"
+    mock_db_key.project_id = "proj-id"
+    mock_db_key.task_type = "general"
+    mock_db_key.model_priorities = []
+    mock_db_key.provider_priorities = []
+    mock_result.scalars().first.return_value = mock_db_key
+    mock_session.execute.return_value = mock_result
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        # We need to mock the pipeline otherwise it will try to call real OpenAI
+        class MockPipeline:
+            async def execute(self, request, *args, **kwargs):
+                from dronzer.domain.entities.chat import ChatCompletionResponse, ChatChoice, ChatMessage, ChatUsage
+                import time
+                return ChatCompletionResponse(
+                    id="test-id",
+                    created=int(time.time()),
+                    model="gpt-4o",
+                    choices=[ChatChoice(index=0, finish_reason="stop", message=ChatMessage(role="assistant", content="hello world"))],
+                    usage=ChatUsage(prompt_tokens=10, completion_tokens=10, total_tokens=20)
+                )
+
+        app.state.pipeline = MockPipeline()
         response = await client.post(
-            f"{GATEWAY_URL}/chat/completions", json=payload, headers=headers, timeout=30.0
+            "/v1/chat/completions", json=payload, headers=headers, timeout=30.0
         )
 
     assert response.status_code == 200, (
@@ -51,10 +86,10 @@ async def test_openai_chat_completion_compatibility():
 @pytest.mark.asyncio
 async def test_gateway_health():
     """Validates the health endpoint is active and reports Operational."""
-    async with httpx.AsyncClient() as client:
-        # Assuming health is mounted at root /health
-        response = await client.get(f"{GATEWAY_URL.replace('/v1', '')}/health", timeout=5.0)
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get("/health/liveness", timeout=5.0)
 
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "ok"
+    assert data["status"] == "alive"
