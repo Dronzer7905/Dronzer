@@ -20,7 +20,7 @@ class SandboxEngine:
     def __init__(self, mode: str = "subprocess"):
         self.mode = mode  # 'subprocess', 'docker', 'firecracker'
 
-    async def execute_python(self, code: str, timeout_seconds: int = 10) -> tuple[str, str, int]:
+    async def execute_python(self, code: str, timeout_seconds: int = 10) -> tuple[str, str, int | None]:
         """
         Executes Python code in an isolated subprocess.
         Returns: (stdout, stderr, exit_code)
@@ -53,10 +53,11 @@ class SandboxEngine:
             elif self.mode == "docker":
                 # Pseudo: docker run --rm -v temp_path:/app/script.py python:3.9 python /app/script.py
                 raise NotImplementedError("Docker sandbox mode requires daemon connection.")
+            return "", f"Unknown mode {self.mode}", -1
         finally:
             os.remove(temp_path)
 
-    async def execute_shell(self, command: str, timeout_seconds: int = 5) -> tuple[str, str, int]:
+    async def execute_shell(self, command: str, timeout_seconds: int = 5) -> tuple[str, str, int | None]:
         """
         Executes a shell command.
         WARNING: Highly dangerous if exposed to unprivileged agents.
@@ -76,3 +77,4 @@ class SandboxEngine:
             except TimeoutError:
                 process.kill()
                 return "", "Execution timed out.", -1
+        return "", f"Unknown mode {self.mode}", -1

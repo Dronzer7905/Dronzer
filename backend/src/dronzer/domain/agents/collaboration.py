@@ -34,7 +34,7 @@ class AgentCoordinator:
 
         logger.debug(f"Delegation Plan Generated: {delegation_plan_str}")
 
-        results = {}
+        results: dict[str, Any] = {}
 
         # Mocking the parsed delegation plan for demonstration
         parsed_plan = [

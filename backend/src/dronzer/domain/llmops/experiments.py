@@ -37,9 +37,9 @@ class ABExperimentEngine:
 
         # Determine if this request falls into the challenger bucket
         roll = random.uniform(0, 100)
-        is_challenger = roll <= experiment["traffic_split_pct"]
+        is_challenger = roll <= float(str(experiment["traffic_split_pct"]))
 
-        target_version = experiment["challenger"] if is_challenger else experiment["champion"]
+        target_version = str(experiment["challenger"]) if is_challenger else str(experiment["champion"])
 
         logger.debug(
             f"Traffic split decision for {prompt_name}",

@@ -66,7 +66,7 @@ class UniversalToolRuntime:
 
         # 3. Execute
         try:
-            if meta.is_sandboxed:
+            if meta and meta.is_sandboxed:
                 # Delegate to SandboxEngine (implemented in next task)
                 result = await executor(parameters, run_in_sandbox=True)
             else:

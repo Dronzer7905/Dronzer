@@ -48,8 +48,10 @@ class ModelComparisonEngine:
             if isinstance(res, Exception):
                 comparison_results[model_name] = {"error": str(res), "success": False}
             else:
-                res["success"] = True
-                comparison_results[model_name] = res
+                import typing
+                success_res = typing.cast(dict[str, Any], res)
+                success_res["success"] = True
+                comparison_results[model_name] = success_res
 
         logger.info("Side-by-side execution complete")
         return comparison_results

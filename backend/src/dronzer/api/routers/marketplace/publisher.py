@@ -32,7 +32,7 @@ async def publish_package(package_name: str, file: UploadFile = File(...)):
     This invokes the `PackageEngine` to validate SemVer and dependencies,
     followed by the `SecurityScanner` to check for malware and sandbox compliance.
     """
-    if not file.filename.endswith(".dzpkg"):
+    if not file.filename or not file.filename.endswith(".dzpkg"):
         raise HTTPException(status_code=400, detail="Invalid file type. Must be .dzpkg")
 
     # 1. Save uploaded file to temp storage

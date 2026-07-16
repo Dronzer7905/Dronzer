@@ -63,7 +63,8 @@ class BackgroundWorker:
         """Moves a fatally failed job to the Dead Letter Queue."""
         job["error"] = error
         job["failed_at"] = datetime.now(UTC).isoformat()
-        await self.redis.lpush(self.dlq_name, json.dumps(job))
+        import typing
+        await typing.cast(typing.Awaitable[Any], self.redis.lpush(self.dlq_name, json.dumps(job)))
         logger.error("Job moved to DLQ", job_id=job["id"], error=error)
 
     async def start(self):

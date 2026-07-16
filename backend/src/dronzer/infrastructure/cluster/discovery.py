@@ -39,7 +39,7 @@ class ServiceRegistry:
         logger.debug("Querying Service Registry for healthy nodes", filters=required_capabilities)
 
         # Mocking active nodes
-        nodes = [
+        nodes: list[dict[str, Any]] = [
             {
                 "id": "node_aws_useast1_01",
                 "region": "us-east-1",

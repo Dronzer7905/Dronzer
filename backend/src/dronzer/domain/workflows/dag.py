@@ -9,7 +9,7 @@ logger = structlog.get_logger("dronzer.workflows.dag")
 class WorkflowEdge(BaseModel):
     source: str
     target: str
-    condition: str = None  # Optional JS/Python expression for branching
+    condition: str | None = None  # Optional JS/Python expression for branching
 
 
 class WorkflowNode(BaseModel):
@@ -35,7 +35,7 @@ class DAGCompiler:
         self.adjacency_list = self._build_adjacency_list()
 
     def _build_adjacency_list(self) -> dict[str, list[str]]:
-        adj = {node.id: [] for node in self.dag.nodes}
+        adj: dict[str, list[str]] = {node.id: [] for node in self.dag.nodes}
         for edge in self.dag.edges:
             if edge.source in adj:
                 adj[edge.source].append(edge.target)
@@ -84,7 +84,7 @@ class DAGCompiler:
         Used by the WorkflowEngine to execute independent branches concurrently or sequentially.
         """
         visited = set()
-        stack = []
+        stack: list[str] = []
 
         def topo_sort(node_id: str):
             visited.add(node_id)

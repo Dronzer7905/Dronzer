@@ -62,7 +62,7 @@ class MCPServer:
             return {"tools": [t.dict() for t in self._tools.values()]}
 
         elif method == "tools/call":
-            tool_name = params.get("name")
+            tool_name = str(params.get("name", ""))
             tool_args = params.get("arguments", {})
             handler = self._tool_handlers.get(tool_name)
 
@@ -79,7 +79,7 @@ class MCPServer:
             return {"resources": [r.dict() for r in self._resources.values()]}
 
         elif method == "resources/read":
-            uri = params.get("uri")
+            uri = str(params.get("uri", ""))
             handler = self._resource_handlers.get(uri)
             if not handler:
                 raise ValueError(f"Unknown resource URI: {uri}")

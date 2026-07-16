@@ -53,6 +53,6 @@ class NotificationDispatcher:
         # SMTP or SendGrid API integration
         pass
 
-    async def _send_webhook(self, webhook_url: str, payload: dict[str, Any]):
+    async def _send_webhook(self, webhook_url: str, payload: dict[str, Any] | None):
         # Raw HTTP POST for custom enterprise integrations
         pass

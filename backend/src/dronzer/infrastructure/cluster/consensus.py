@@ -45,7 +45,7 @@ class LeaderElection:
         self.node_id = node_id
         self.lock_manager = lock_manager
         self.is_leader = False
-        self._election_task = None
+        self._election_task: asyncio.Task[Any] | None = None
         self.lease_duration_ms = 15000
 
     async def start_election_loop(self, cluster_name: str):

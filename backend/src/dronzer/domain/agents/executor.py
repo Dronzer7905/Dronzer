@@ -58,7 +58,7 @@ class AgentExecutor:
             elif llm_response.get("action") == "tool_call":
                 # Execute requested tool
                 tool_name = llm_response.get("tool_name")
-                tool_args = llm_response.get("tool_args", {})
+                tool_args: dict[str, Any] = llm_response.get("tool_args", {})
 
                 try:
                     tool_result = await self.tool_registry.execute_tool(tool_name, tool_args)

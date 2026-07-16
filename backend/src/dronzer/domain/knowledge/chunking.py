@@ -42,7 +42,7 @@ class ChunkingEngine:
         # A simplified mock implementation of LangChain's RecursiveCharacterTextSplitter
         chunks = []
         words = text.split()
-        current_chunk = []
+        current_chunk: list[str] = []
         current_length = 0
 
         for word in words:

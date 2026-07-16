@@ -12,7 +12,7 @@ class TimelineEvent(BaseModel):
     duration_ms: int
     inputs: dict[str, Any]
     outputs: dict[str, Any]
-    error: str = None
+    error: str | None = None
 
 
 class WorkflowDebugger:

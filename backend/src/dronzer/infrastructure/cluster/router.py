@@ -25,7 +25,7 @@ class GlobalRouter:
         logger.debug("Calculating global route", context=request_context)
 
         # 1. Parse Routing Constraints (e.g., must run in EU for GDPR, must use GPU)
-        constraints = {}
+        constraints: dict[str, Any] = {}
         if request_context.get("requires_gdpr"):
             constraints["compliance"] = "gdpr"
         if request_context.get("requires_gpu"):
