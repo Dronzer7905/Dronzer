@@ -9,7 +9,7 @@ class EmbeddingProvider(ABC):
     @abstractmethod
     async def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """
-        Generates embeddings for a batch of documents. 
+        Generates embeddings for a batch of documents.
         Usually optimized for retrieval (e.g. Voyage AI uses a specific prefix for documents).
         """
         pass

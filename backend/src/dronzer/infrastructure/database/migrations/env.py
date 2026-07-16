@@ -17,6 +17,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
+
 def run_migrations_offline() -> None:
     url = settings.DATABASE_URL
     context.configure(

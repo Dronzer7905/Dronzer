@@ -12,6 +12,7 @@ class GatewayKey(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     Used by external clients to authenticate against the gateway.
     The raw key is shown only once at creation; we store the hashed version.
     """
+
     __tablename__ = "gateway_keys"
 
     hashed_key: Mapped[str] = mapped_column(String(500), unique=True, index=True)
@@ -23,7 +24,7 @@ class GatewayKey(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         ForeignKey("projects.id", ondelete="SET NULL"), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(default=True)
-    
+
     # Task-Aware Routing Overrides
     task_type: Mapped[str] = mapped_column(String(100), default="chat")
     model_priorities: Mapped[list[str]] = mapped_column(JSON, default=list)

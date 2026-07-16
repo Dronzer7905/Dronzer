@@ -6,15 +6,18 @@ from pydantic import BaseModel
 
 class VectorRecord(BaseModel):
     """A chunk of text converted into a dense vector with associated metadata."""
+
     id: str
     vector: list[float]
     payload: dict[str, Any]
-    sparse_vector: dict[int, float] | None = None # Support for Hybrid Search (BM25)
+    sparse_vector: dict[int, float] | None = None  # Support for Hybrid Search (BM25)
+
 
 class SearchResult(BaseModel):
     id: str
     score: float
     payload: dict[str, Any]
+
 
 class VectorStoreProvider(ABC):
     """
@@ -33,11 +36,13 @@ class VectorStoreProvider(ABC):
         pass
 
     @abstractmethod
-    async def search(self,
-                     collection_name: str,
-                     query_vector: list[float],
-                     top_k: int = 5,
-                     filters: dict[str, Any] | None = None) -> list[SearchResult]:
+    async def search(
+        self,
+        collection_name: str,
+        query_vector: list[float],
+        top_k: int = 5,
+        filters: dict[str, Any] | None = None,
+    ) -> list[SearchResult]:
         """Performs Dense Semantic Search (Cosine Similarity / Dot Product)."""
         pass
 

@@ -6,7 +6,7 @@ from fastapi.openapi.utils import get_openapi
 
 def custom_openapi(app: FastAPI) -> dict[str, Any]:
     """
-    Overrides the default FastAPI OpenAPI generation to inject 
+    Overrides the default FastAPI OpenAPI generation to inject
     OpenAPI 3.1 specific metadata needed for rigorous SDK and CLI generation.
     """
     if app.openapi_schema:
@@ -31,7 +31,7 @@ def custom_openapi(app: FastAPI) -> dict[str, Any]:
     openapi_schema["servers"] = [
         {"url": "https://api.dronzer.io", "description": "Production Cloud"},
         {"url": "https://sandbox.api.dronzer.io", "description": "Sandbox / Testing"},
-        {"url": "http://localhost:8000", "description": "Local Development"}
+        {"url": "http://localhost:8000", "description": "Local Development"},
     ]
 
     # 3. Standardized Error Components
@@ -45,9 +45,9 @@ def custom_openapi(app: FastAPI) -> dict[str, Any]:
         "properties": {
             "code": {"type": "string", "example": "rate_limit_exceeded"},
             "message": {"type": "string"},
-            "request_id": {"type": "string"}
+            "request_id": {"type": "string"},
         },
-        "required": ["code", "message"]
+        "required": ["code", "message"],
     }
 
     # 4. Webhook Definitions
@@ -61,9 +61,7 @@ def custom_openapi(app: FastAPI) -> dict[str, Any]:
                         }
                     }
                 },
-                "responses": {
-                    "200": {"description": "Webhook received successfully"}
-                }
+                "responses": {"200": {"description": "Webhook received successfully"}},
             }
         }
     }

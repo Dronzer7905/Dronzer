@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.datasets")
 
+
 class DatasetRegistry:
     """
     Manages Evaluation Datasets ("Golden Datasets").
@@ -41,10 +42,10 @@ class DatasetRegistry:
         return [
             {
                 "input": {"query": "Write a python function to add two numbers"},
-                "expected_output": "def add(a, b):\n    return a + b"
+                "expected_output": "def add(a, b):\n    return a + b",
             },
             {
                 "input": {"query": "How do I exit vim?"},
-                "expected_output": "Type :q and press Enter."
-            }
+                "expected_output": "Type :q and press Enter.",
+            },
         ]

@@ -20,6 +20,7 @@ from dronzer.infrastructure.security.encryption import crypto
 
 logger = structlog.get_logger("dronzer.orchestration.pipeline")
 
+
 class RequestPipeline:
     """
     The main entrypoint for the AI Orchestration Engine.
@@ -27,11 +28,7 @@ class RequestPipeline:
     """
 
     def __init__(
-        self,
-        decision_engine,
-        failover_engine,
-        metrics,
-        plugins: list[IPluginHook] = None
+        self, decision_engine, failover_engine, metrics, plugins: list[IPluginHook] = None
     ):
         self.decision_engine = decision_engine
         self.failover_engine = failover_engine
@@ -75,7 +72,7 @@ class RequestPipeline:
             provider_name = str(provider_id)
 
         provider = ProviderFactory.get_provider(provider_name)
-        
+
         # 1. Fetch API Key from database
         api_key_str = None
         if session:
@@ -85,14 +82,18 @@ class RequestPipeline:
                 try:
                     api_key_str = crypto.decrypt(db_key.encrypted_key)
                 except Exception as e:
-                    logger.error("Failed to decrypt provider API key", provider=provider_name, error=str(e))
-                    raise ValueError(f"Failed to decrypt API key for {provider_name}. Check your SECRET_KEY.")
+                    logger.error(
+                        "Failed to decrypt provider API key", provider=provider_name, error=str(e)
+                    )
+                    raise ValueError(
+                        f"Failed to decrypt API key for {provider_name}. Check your SECRET_KEY."
+                    )
 
         # 2. Fallback to the environment variables
         if not api_key_str:
             env_key_name = f"{provider_name.upper()}_API_KEY"
             api_key_str = os.getenv(env_key_name)
-        
+
         if not api_key_str:
             raise ValueError(
                 f"Missing API Key for {provider_name}. "
@@ -102,6 +103,7 @@ class RequestPipeline:
         # Resolve model UUID → name for the upstream payload
         if session:
             from dronzer.infrastructure.database.models.ai import Model
+
             model_result = await session.execute(select(Model).where(Model.id == model_id))
             db_model = model_result.scalars().first()
             if db_model:
@@ -116,7 +118,13 @@ class RequestPipeline:
         else:
             return await provider.generate_chat(payload, api_key_str, base_url=base_url)
 
-    async def process_request(self, tenant_id: uuid.UUID, payload: dict[str, Any], session: AsyncSession = None, request_state: dict[str, Any] = None) -> dict[str, Any]:
+    async def process_request(
+        self,
+        tenant_id: uuid.UUID,
+        payload: dict[str, Any],
+        session: AsyncSession = None,
+        request_state: dict[str, Any] = None,
+    ) -> dict[str, Any]:
         """
         Executes the complete request lifecycle.
         """
@@ -127,7 +135,7 @@ class RequestPipeline:
         # 1. Build Context
         task_type = state.get("task_type", "chat")
         capabilities = CapabilityEngine.detect_capabilities(payload)
-        
+
         # Inject capabilities based on the GatewayKey's task type
         if task_type == "coding" and "code" not in capabilities:
             capabilities.append("code")
@@ -135,7 +143,7 @@ class RequestPipeline:
             capabilities.append("reasoning")
         elif task_type == "vision" and "vision" not in capabilities:
             capabilities.append("vision")
-            
+
         context = RequestContext(
             tenant_id=tenant_id,
             project_id=state.get("project_id"),
@@ -147,7 +155,7 @@ class RequestPipeline:
             gateway_key_id=state.get("gateway_key_id"),
             task_type=task_type,
             model_priorities=state.get("model_priorities", []),
-            provider_priorities=state.get("provider_priorities", [])
+            provider_priorities=state.get("provider_priorities", []),
         )
 
         # 2. Pre-Routing Plugins
@@ -158,7 +166,9 @@ class RequestPipeline:
         plan = await self.decision_engine.generate_execution_plan(context, session)
 
         # 4. Executor wrapping (Includes Retry logic)
-        async def execute_target(provider_id: uuid.UUID, model_id: uuid.UUID, key_id: uuid.UUID) -> dict[str, Any]:
+        async def execute_target(
+            provider_id: uuid.UUID, model_id: uuid.UUID, key_id: uuid.UUID
+        ) -> dict[str, Any]:
             # This is wrapped in the RetryEngine
             return await RetryEngine.execute_with_retry(
                 self._execute_upstream_call,
@@ -169,7 +179,7 @@ class RequestPipeline:
                 key_id=key_id,
                 payload=payload,
                 is_streaming=plan.is_streaming,
-                session=session
+                session=session,
             )
 
         # 5. Execute with Failover protections

@@ -6,6 +6,7 @@ from dronzer.domain.integration.connectors.base import BaseConnector, ConnectorA
 
 logger = structlog.get_logger("dronzer.integration.connectors.browser")
 
+
 class BrowserAutomationConnector(BaseConnector):
     """
     Integrates with Playwright for Headless Browser automation.
@@ -22,16 +23,18 @@ class BrowserAutomationConnector(BaseConnector):
             ConnectorAction(
                 name="extract_page_text",
                 description="Navigates to a URL and extracts visible text content.",
-                parameters_schema={"url": "string"}
+                parameters_schema={"url": "string"},
             ),
             ConnectorAction(
                 name="take_screenshot",
                 description="Navigates to a URL and captures a screenshot base64 string.",
-                parameters_schema={"url": "string", "full_page": "boolean"}
-            )
+                parameters_schema={"url": "string", "full_page": "boolean"},
+            ),
         ]
 
-    async def execute_action(self, action_name: str, params: dict[str, Any], credentials: dict[str, str] = None) -> Any:
+    async def execute_action(
+        self, action_name: str, params: dict[str, Any], credentials: dict[str, str] = None
+    ) -> Any:
         logger.info(f"Executing Browser Automation: {action_name}")
         url = params.get("url")
 
@@ -50,7 +53,10 @@ class BrowserAutomationConnector(BaseConnector):
             return {"url": url, "content": "Mocked extracted text from the rendered DOM."}
 
         elif action_name == "take_screenshot":
-            return {"url": url, "screenshot_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="}
+            return {
+                "url": url,
+                "screenshot_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+            }
 
         else:
             raise ValueError(f"Unknown action: {action_name}")

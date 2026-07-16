@@ -24,7 +24,7 @@ def get_engine() -> AsyncEngine:
         pool_size=settings.DB_POOL_SIZE,
         max_overflow=settings.DB_MAX_OVERFLOW,
         pool_pre_ping=True,  # Health check before handing out connections
-        echo=settings.DEBUG, # Log SQL in debug mode
+        echo=settings.DEBUG,  # Log SQL in debug mode
     )
 
 

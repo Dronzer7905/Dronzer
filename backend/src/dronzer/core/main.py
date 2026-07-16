@@ -22,12 +22,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     Application startup and shutdown lifecycle hooks.
     """
     # STARTUP
-    logger.info("Booting Dronzer AI Gateway...", version=settings.APP_VERSION, env=settings.ENVIRONMENT.value)
+    logger.info(
+        "Booting Dronzer AI Gateway...",
+        version=settings.APP_VERSION,
+        env=settings.ENVIRONMENT.value,
+    )
 
     # Initialize dependency containers
-    redis_client = Redis.from_url(settings.REDIS_URL if hasattr(settings, "REDIS_URL") else "redis://localhost:6379")
+    redis_client = Redis.from_url(
+        settings.REDIS_URL if hasattr(settings, "REDIS_URL") else "redis://localhost:6379"
+    )
     app.state.cache = DistributedCache(redis_client=redis_client)
-    app.state.event_bus = None # Future event bus integration
+    app.state.event_bus = None  # Future event bus integration
     app.state.redis = redis_client
 
     logger.info("Startup complete. Accepting connections.")
@@ -62,7 +68,11 @@ def create_app() -> FastAPI:
     app.add_middleware(SecurityHeadersMiddleware)
 
     # Strictly configure CORS based on environment
-    allowed_origins = [str(origin) for origin in settings.CORS_ORIGINS] if hasattr(settings, "CORS_ORIGINS") and settings.CORS_ORIGINS else []
+    allowed_origins = (
+        [str(origin) for origin in settings.CORS_ORIGINS]
+        if hasattr(settings, "CORS_ORIGINS") and settings.CORS_ORIGINS
+        else []
+    )
     if settings.ENVIRONMENT == "development":
         allowed_origins.append("*")
 
@@ -70,7 +80,7 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=allowed_origins if allowed_origins else ["https://dashboard.dronzer.ai"],
         allow_credentials=True,
-        allow_methods=["GET", "POST", "OPTIONS"], # Limit methods to essentials
+        allow_methods=["GET", "POST", "OPTIONS"],  # Limit methods to essentials
         allow_headers=["*"],
     )
 
@@ -81,7 +91,7 @@ def create_app() -> FastAPI:
             "Dronzer exception caught",
             path=request.url.path,
             status=exc.status_code,
-            message=exc.message
+            message=exc.message,
         )
         return JSONResponse(
             status_code=exc.status_code,
@@ -90,11 +100,7 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-        logger.error(
-            "Unhandled server exception",
-            path=request.url.path,
-            exc_info=True
-        )
+        logger.error("Unhandled server exception", path=request.url.path, exc_info=True)
         return JSONResponse(
             status_code=500,
             content={"error": "Internal server error"},

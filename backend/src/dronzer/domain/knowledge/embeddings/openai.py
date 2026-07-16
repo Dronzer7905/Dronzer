@@ -1,15 +1,16 @@
-
 import structlog
 
 from dronzer.domain.knowledge.embeddings.base import EmbeddingProvider
 
 logger = structlog.get_logger("dronzer.knowledge.embeddings.openai")
 
+
 class OpenAIEmbeddingProvider(EmbeddingProvider):
     """
     OpenAI implementation for text embeddings.
     Uses models like 'text-embedding-3-small' and 'text-embedding-3-large'.
     """
+
     def __init__(self, api_key: str, model: str = "text-embedding-3-small", dimensions: int = 1536):
         self.api_key = api_key
         self.model = model

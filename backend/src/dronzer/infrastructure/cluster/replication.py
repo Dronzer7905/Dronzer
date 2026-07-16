@@ -4,9 +4,10 @@ import structlog
 
 logger = structlog.get_logger("dronzer.cluster.replication")
 
+
 class ReplicationEngine:
     """
-    Synchronizes Core configurations, Enterprise Policies, and Workflow definitions 
+    Synchronizes Core configurations, Enterprise Policies, and Workflow definitions
     across multi-region PostgreSQL instances.
     Enables true Active-Active multi-cloud deployments by preventing state drift.
     """
@@ -18,25 +19,29 @@ class ReplicationEngine:
             "workflow_templates",
             "agent_profiles",
             "rbac_policies",
-            "organization_settings"
+            "organization_settings",
         ]
 
-    async def broadcast_mutation(self, table_name: str, record_id: str, payload: dict[str, Any], action: str = "UPDATE"):
+    async def broadcast_mutation(
+        self, table_name: str, record_id: str, payload: dict[str, Any], action: str = "UPDATE"
+    ):
         """
-        Triggered dynamically by SQLAlchemy lifecycle hooks (after_insert, after_update) 
+        Triggered dynamically by SQLAlchemy lifecycle hooks (after_insert, after_update)
         whenever a critical config changes in the Primary cluster.
         """
         if table_name not in self.tables_to_sync:
             return
 
-        logger.debug("Broadcasting DB Mutation for replication", table=table_name, record_id=record_id)
+        logger.debug(
+            "Broadcasting DB Mutation for replication", table=table_name, record_id=record_id
+        )
 
         event = {
             "type": "db_replication",
             "table": table_name,
             "action": action,
             "record_id": record_id,
-            "payload": payload
+            "payload": payload,
         }
 
         if self.bus:
@@ -56,7 +61,7 @@ class ReplicationEngine:
 
     async def full_sync(self, source_cluster_endpoint: str):
         """
-        Performs a full table scan and synchronization when a new cluster joins 
+        Performs a full table scan and synchronization when a new cluster joins
         or recovers from a prolonged partition.
         """
         logger.info(f"Initiating Full State Sync from {source_cluster_endpoint}")

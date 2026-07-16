@@ -19,7 +19,7 @@ def create_app() -> FastAPI:
         version="1.0.0",
         docs_url="/docs",
         redoc_url=None,
-        default_response_class=ORJSONResponse
+        default_response_class=ORJSONResponse,
     )
 
     # Global Middleware

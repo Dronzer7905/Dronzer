@@ -1,12 +1,12 @@
-
-
 class CostEngine:
     """
     Calculates cost estimations and verifies budget limits based on model pricing.
     """
 
     @staticmethod
-    def estimate_cost(prompt_tokens: int, completion_tokens: int, model_pricing: dict[str, float]) -> float:
+    def estimate_cost(
+        prompt_tokens: int, completion_tokens: int, model_pricing: dict[str, float]
+    ) -> float:
         """
         Estimates the total cost of a request based on per-1k token pricing.
         model_pricing should contain 'prompt_cost_per_1k' and 'completion_cost_per_1k'.

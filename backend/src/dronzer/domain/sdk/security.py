@@ -4,9 +4,10 @@ import structlog
 
 logger = structlog.get_logger("dronzer.sdk.security")
 
+
 class PluginSecuritySandbox:
     """
-    Validates plugin configurations and sanitizes inputs before passing 
+    Validates plugin configurations and sanitizes inputs before passing
     them to dynamically loaded modules to prevent arbitrary execution exploits.
     """
 
@@ -25,7 +26,7 @@ class PluginSecuritySandbox:
     @staticmethod
     def sanitize_payload(payload: dict[str, Any]) -> dict[str, Any]:
         """
-        Strips potentially dangerous metadata from user payloads before handing 
+        Strips potentially dangerous metadata from user payloads before handing
         them to external SDKs or plugins.
         """
         safe_payload = payload.copy()

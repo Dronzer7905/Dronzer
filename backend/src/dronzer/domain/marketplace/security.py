@@ -5,6 +5,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.marketplace.security")
 
+
 class SecurityScanner:
     """
     Validates the integrity and safety of uploaded Dronzer Packages.
@@ -19,7 +20,7 @@ class SecurityScanner:
             "filesystem_write",
             "network_raw_sockets",
             "execute_shell",
-            "read_env_vars"
+            "read_env_vars",
         ]
 
     async def scan_package(self, package_path: str, manifest: dict[str, Any]) -> dict[str, Any]:
@@ -52,7 +53,7 @@ class SecurityScanner:
             "sha256": file_hash,
             "is_signed": is_signed,
             "risk_level": risk_level,
-            "warnings": warnings
+            "warnings": warnings,
         }
 
     def _calculate_sha256(self, file_path: str) -> str:

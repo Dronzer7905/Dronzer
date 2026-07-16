@@ -5,27 +5,38 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.enterprise.notifications")
 
+
 class NotificationChannel(BaseModel):
-    channel_type: str # "email", "slack", "teams", "webhook"
-    target: str # e.g. "admin@company.com" or "https://hooks.slack.com/..."
+    channel_type: str  # "email", "slack", "teams", "webhook"
+    target: str  # e.g. "admin@company.com" or "https://hooks.slack.com/..."
+
 
 class NotificationDispatcher:
     """
     Handles outbound alerting for Enterprise events (Quotas, Security Breaches, Approvals).
     Should run asynchronously via the Background Worker Queue.
     """
+
     def __init__(self, queue_client: Any = None):
         self.queue = queue_client
 
-    async def dispatch(self, title: str, message: str, channels: list[NotificationChannel], payload: dict[str, Any] = None):
+    async def dispatch(
+        self,
+        title: str,
+        message: str,
+        channels: list[NotificationChannel],
+        payload: dict[str, Any] = None,
+    ):
         """
         Routes a notification to the configured channels.
         """
         for channel in channels:
-            logger.info("Dispatching notification",
-                        channel=channel.channel_type,
-                        target=channel.target,
-                        title=title)
+            logger.info(
+                "Dispatching notification",
+                channel=channel.channel_type,
+                target=channel.target,
+                title=title,
+            )
 
             if channel.channel_type == "slack":
                 await self._send_slack(channel.target, title, message)

@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.integration.mcp.client")
 
+
 class MCPClient:
     """
     Connects to external Model Context Protocol (MCP) servers via stdio or SSE.
@@ -31,7 +32,11 @@ class MCPClient:
 
         # Mocking the response from an external server
         self._available_tools = [
-            {"name": "remote_db_query", "description": "Queries the enterprise data lake.", "inputSchema": {}}
+            {
+                "name": "remote_db_query",
+                "description": "Queries the enterprise data lake.",
+                "inputSchema": {},
+            }
         ]
 
         logger.debug("Successfully connected to external MCP server and synced tools.")

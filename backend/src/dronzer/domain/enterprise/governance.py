@@ -5,12 +5,13 @@ import structlog
 
 logger = structlog.get_logger("dronzer.enterprise.governance")
 
+
 class PIIRedactor:
     """
     Scans and redacts Personally Identifiable Information (PII) from prompts and responses.
     Essential for HIPAA/GDPR compliance when routing data to public cloud providers.
-    
-    In a production enterprise deployment, this would integrate with Microsoft Presidio 
+
+    In a production enterprise deployment, this would integrate with Microsoft Presidio
     or AWS Comprehend Medical for context-aware NLP redaction, rather than raw regex.
     """
 
@@ -18,7 +19,7 @@ class PIIRedactor:
     PATTERNS = {
         "EMAIL": r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+",
         "CREDIT_CARD": r"\b(?:\d[ -]*?){13,16}\b",
-        "SSN": r"\b\d{3}-\d{2}-\d{4}\b"
+        "SSN": r"\b\d{3}-\d{2}-\d{4}\b",
     }
 
     def __init__(self, mode: str = "redact"):

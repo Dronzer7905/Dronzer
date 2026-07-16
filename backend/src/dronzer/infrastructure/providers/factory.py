@@ -6,11 +6,12 @@ from dronzer.domain.sdk.provider import IProvider
 
 logger = structlog.get_logger("dronzer.providers.factory")
 
+
 class ProviderFactory:
     """
     Factory for instantiating AI Provider SDKs dynamically.
     """
-    
+
     _registry: Dict[str, Type[IProvider]] = {}
     _initialized = False
 
@@ -23,13 +24,19 @@ class ProviderFactory:
         provider_map = {
             "anthropic": ("dronzer.infrastructure.providers.anthropic", "AnthropicProvider"),
             "cerebras": ("dronzer.infrastructure.providers.cerebras", "CerebrasProvider"),
-            "cloudflare-workers-ai": ("dronzer.infrastructure.providers.cloudflare", "CloudflareProvider"),
+            "cloudflare-workers-ai": (
+                "dronzer.infrastructure.providers.cloudflare",
+                "CloudflareProvider",
+            ),
             "cohere": ("dronzer.infrastructure.providers.cohere", "CohereProvider"),
             "deepseek": ("dronzer.infrastructure.providers.deepseek", "DeepSeekProvider"),
             "fireworks": ("dronzer.infrastructure.providers.fireworks", "FireworksProvider"),
             "gemini": ("dronzer.infrastructure.providers.gemini", "GeminiProvider"),
-            "google": ("dronzer.infrastructure.providers.gemini", "GeminiProvider"), # Alias
-            "google-ai-studio": ("dronzer.infrastructure.providers.gemini", "GeminiProvider"), # Alias
+            "google": ("dronzer.infrastructure.providers.gemini", "GeminiProvider"),  # Alias
+            "google-ai-studio": (
+                "dronzer.infrastructure.providers.gemini",
+                "GeminiProvider",
+            ),  # Alias
             "generic": ("dronzer.infrastructure.providers.generic", "GenericOpenAIProvider"),
             "groq": ("dronzer.infrastructure.providers.groq", "GroqProvider"),
             "lmstudio": ("dronzer.infrastructure.providers.lmstudio", "LMStudioProvider"),
@@ -61,11 +68,11 @@ class ProviderFactory:
         Instantiates and returns the Provider SDK for the given ID.
         """
         cls._initialize_registry()
-        
+
         provider_id = provider_id.lower()
         provider_class = cls._registry.get(provider_id)
-        
+
         if not provider_class:
             raise ValueError(f"Provider SDK for '{provider_id}' is not implemented or registered.")
-            
+
         return provider_class()

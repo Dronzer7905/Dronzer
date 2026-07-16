@@ -6,10 +6,12 @@ router = APIRouter(
     tags=["Marketplace Publisher"],
 )
 
+
 class PublisherRegistration(BaseModel):
     name: str
-    namespace: str # e.g. "@google"
+    namespace: str  # e.g. "@google"
     website: str
+
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_publisher(req: PublisherRegistration):
@@ -22,11 +24,9 @@ async def register_publisher(req: PublisherRegistration):
 
     return {"id": "pub_123", "status": "pending_verification", "namespace": req.namespace}
 
+
 @router.post("/packages/{package_name}/publish")
-async def publish_package(
-    package_name: str,
-    file: UploadFile = File(...)
-):
+async def publish_package(package_name: str, file: UploadFile = File(...)):
     """
     Endpoint for uploading a `.dzpkg` (Dronzer Package Archive).
     This invokes the `PackageEngine` to validate SemVer and dependencies,
@@ -45,5 +45,5 @@ async def publish_package(
         "status": "published",
         "package": package_name,
         "version": "1.0.0",
-        "warnings": ["Capability requested: network_access"]
+        "warnings": ["Capability requested: network_access"],
     }

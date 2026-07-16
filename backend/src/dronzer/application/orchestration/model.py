@@ -1,4 +1,3 @@
-
 import structlog
 
 from sqlalchemy import select
@@ -19,7 +18,7 @@ class ModelSelectionEngine:
 
     async def filter_models(self, context: DecisionContext, session: AsyncSession) -> list[Model]:
         """
-        Filters models belonging to valid providers that satisfy 
+        Filters models belonging to valid providers that satisfy
         the requested capabilities and context window.
         """
         logger.info("Filtering valid models")
@@ -48,12 +47,13 @@ class ModelSelectionEngine:
 
             # 3. Must satisfy capabilities (e.g. vision, json_mode)
             if not CapabilityEngine.matches(
-                context.request_context.requested_capabilities,
-                model.capabilities
+                context.request_context.requested_capabilities, model.capabilities
             ):
-                logger.warning(f"Model {model.name} failed capability check. Req: {context.request_context.requested_capabilities}, Prov: {model.capabilities}")
+                logger.warning(
+                    f"Model {model.name} failed capability check. Req: {context.request_context.requested_capabilities}, Prov: {model.capabilities}"
+                )
                 continue
-            
+
             logger.info(f"Model {model.name} passed capability check.")
 
             # 4. Name matching or Alias resolution
@@ -61,7 +61,9 @@ class ModelSelectionEngine:
                 # If the user requests "auto", bypass the strict name check
                 # to allow semantic routing and cross-model failovers based on capabilities.
                 if requested.lower() == "auto":
-                    logger.info(f"Auto alias detected. Bypassing strict name check for {model.name}")
+                    logger.info(
+                        f"Auto alias detected. Bypassing strict name check for {model.name}"
+                    )
                 else:
                     # Match if the requested model name is contained in (or equals) the DB model name
                     if requested.lower() not in model.name.lower():
@@ -76,7 +78,7 @@ class ModelSelectionEngine:
             step="ModelSelection",
             action="FilterModels",
             reason="Matched capabilities, context window, and valid providers",
-            metadata={"count": len(valid_models)}
+            metadata={"count": len(valid_models)},
         )
 
         return valid_models

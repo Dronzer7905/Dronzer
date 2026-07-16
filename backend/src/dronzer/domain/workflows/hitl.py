@@ -7,6 +7,7 @@ from dronzer.domain.workflows.nodes import BaseNodeExecutor
 
 logger = structlog.get_logger("dronzer.workflows.hitl")
 
+
 class ApprovalNodeExecutor(BaseNodeExecutor):
     """
     Suspends workflow execution until a human administrator reviews the state.
@@ -35,7 +36,7 @@ class ApprovalNodeExecutor(BaseNodeExecutor):
                 requester_id=requester_id,
                 action="workflow_node_approval",
                 payload={"context": context_message, "state": global_state},
-                roles_required=roles_required
+                roles_required=roles_required,
             )
 
         # Returning `_hitl_pause: True` signals the WorkflowEngine to pause the background job

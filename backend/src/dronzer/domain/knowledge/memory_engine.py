@@ -4,16 +4,19 @@ import structlog
 
 logger = structlog.get_logger("dronzer.knowledge.memory")
 
+
 class MemoryTurnData:
     def __init__(self, role: str, content: str):
         self.role = role
         self.content = content
+
 
 class MemoryEngine:
     """
     Manages short-term and long-term conversational memory for AI Agents.
     Integrates with the Vector Database to fetch historically relevant past conversations.
     """
+
     def __init__(self, db_session: Any = None, llm_provider: Any = None, vector_store: Any = None):
         self.db = db_session
         self.llm = llm_provider
@@ -37,7 +40,7 @@ class MemoryEngine:
         # Fetch from relational DB
         return [
             MemoryTurnData(role="user", content="What is the Gateway?"),
-            MemoryTurnData(role="assistant", content="The Gateway is an Enterprise AI Platform.")
+            MemoryTurnData(role="assistant", content="The Gateway is an Enterprise AI Platform."),
         ]
 
     async def summarize_session(self, session_id: str) -> str:

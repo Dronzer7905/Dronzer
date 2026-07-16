@@ -7,6 +7,7 @@ from dronzer.infrastructure.cluster.discovery import ServiceRegistry
 
 logger = structlog.get_logger("dronzer.cluster.router")
 
+
 class GlobalRouter:
     """
     Intelligent L7 routing layer for multi-region deployments.
@@ -34,11 +35,17 @@ class GlobalRouter:
         eligible_nodes = await self.registry.find_healthy_nodes(constraints)
 
         if not eligible_nodes:
-            logger.error("No eligible nodes available for routing constraints", constraints=constraints)
-            raise ConnectionError("Service Unavailable: No healthy nodes match routing constraints.")
+            logger.error(
+                "No eligible nodes available for routing constraints", constraints=constraints
+            )
+            raise ConnectionError(
+                "Service Unavailable: No healthy nodes match routing constraints."
+            )
 
         # 3. Apply Routing Strategy
-        strategy = request_context.get("routing_strategy", "latency") # 'latency', 'cost', 'weighted_round_robin'
+        strategy = request_context.get(
+            "routing_strategy", "latency"
+        )  # 'latency', 'cost', 'weighted_round_robin'
 
         if strategy == "weighted_round_robin":
             # Simple probabilistic routing based on node capacity weight

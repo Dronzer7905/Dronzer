@@ -14,11 +14,13 @@ from dronzer.infrastructure.security.encryption import crypto
 logger = structlog.get_logger("dronzer.api.admin.keys")
 router = APIRouter(prefix="/keys", tags=["Admin API Keys"])
 
+
 class APIKeyCreate(BaseModel):
     provider_id: str
     project_id: str
     label: str
     key_value: str
+
 
 class APIKeyResponse(BaseModel):
     id: str
@@ -28,19 +30,22 @@ class APIKeyResponse(BaseModel):
     is_active: bool
     is_failing: bool
 
+
 @router.post("", response_model=APIKeyResponse)
 async def add_api_key(key: APIKeyCreate, session: AsyncSession = Depends(get_db_session)):
     """
     Securely registers a new provider API key into the encryption vault.
     """
     # 1. Fetch Project to ensure it exists
-    project_result = await session.execute(select(Project).where(Project.id == uuid.UUID(key.project_id)))
+    project_result = await session.execute(
+        select(Project).where(Project.id == uuid.UUID(key.project_id))
+    )
     project = project_result.scalars().first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
     # In a real environment, we would encrypt the key_value here
-    
+
     # We also need to map the string provider_id (like "gemini" or UUID) to the actual DB Provider
     provider = None
     try:
@@ -48,9 +53,11 @@ async def add_api_key(key: APIKeyCreate, session: AsyncSession = Depends(get_db_
         provider_result = await session.execute(select(Provider).where(Provider.id == prov_uuid))
         provider = provider_result.scalars().first()
     except ValueError:
-        provider_result = await session.execute(select(Provider).where(Provider.name == key.provider_id))
+        provider_result = await session.execute(
+            select(Provider).where(Provider.name == key.provider_id)
+        )
         provider = provider_result.scalars().first()
-    
+
     if not provider:
         # Auto-create provider if it doesn't exist to maintain backward compatibility with mock tests
         provider = Provider(name=key.provider_id, base_url=f"https://api.{key.provider_id}.com")
@@ -59,11 +66,9 @@ async def add_api_key(key: APIKeyCreate, session: AsyncSession = Depends(get_db_
         await session.refresh(provider)
 
     db_key = APIKey(
-        provider_id=provider.id,
-        encrypted_key=crypto.encrypt(key.key_value),
-        weight=100
+        provider_id=provider.id, encrypted_key=crypto.encrypt(key.key_value), weight=100
     )
-    
+
     session.add(db_key)
     await session.commit()
     await session.refresh(db_key)
@@ -75,11 +80,14 @@ async def add_api_key(key: APIKeyCreate, session: AsyncSession = Depends(get_db_
         project_id=str(project.id),
         label=key.label,
         is_active=not db_key.is_deleted,
-        is_failing=False
+        is_failing=False,
     )
 
+
 @router.get("", response_model=list[APIKeyResponse])
-async def list_keys(project_id: str = None, provider_id: str = None, session: AsyncSession = Depends(get_db_session)):
+async def list_keys(
+    project_id: str = None, provider_id: str = None, session: AsyncSession = Depends(get_db_session)
+):
     """
     Lists API keys. Values are masked for security.
     """
@@ -117,6 +125,7 @@ async def list_keys(project_id: str = None, provider_id: str = None, session: As
         )
 
     return responses
+
 
 @router.delete("/{key_id}")
 async def revoke_key(key_id: str, session: AsyncSession = Depends(get_db_session)):

@@ -7,11 +7,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """
     Adds essential OWASP recommended security headers to all HTTP responses.
     """
+
     async def dispatch(self, request: Request, call_next) -> Response:
         response = await call_next(request)
 
         # HSTS (Strict-Transport-Security)
-        response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=63072000; includeSubDomains; preload"
+        )
         # Prevent MIME type sniffing
         response.headers["X-Content-Type-Options"] = "nosniff"
         # Clickjacking protection

@@ -6,11 +6,9 @@ from dronzer.presentation.schemas.openai import EmbeddingRequest
 logger = structlog.get_logger("dronzer.api.v1.embeddings")
 router = APIRouter(prefix="/embeddings", tags=["Embeddings"])
 
+
 @router.post("")
-async def create_embeddings(
-    request: Request,
-    body: EmbeddingRequest
-):
+async def create_embeddings(request: Request, body: EmbeddingRequest):
     """
     OpenAI-compatible /v1/embeddings endpoint.
     Routes the request through the Orchestration Engine.
@@ -26,13 +24,10 @@ async def create_embeddings(
         "data": [
             {
                 "object": "embedding",
-                "embedding": [0.0023, -0.0093, 0.0123], # truncated
-                "index": 0
+                "embedding": [0.0023, -0.0093, 0.0123],  # truncated
+                "index": 0,
             }
         ],
         "model": body.model,
-        "usage": {
-            "prompt_tokens": 8,
-            "total_tokens": 8
-        }
+        "usage": {"prompt_tokens": 8, "total_tokens": 8},
     }

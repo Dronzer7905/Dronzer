@@ -6,12 +6,14 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.integration.runtime.manager")
 
+
 class ToolMetadata(BaseModel):
     name: str
     version: str
     category: str
     is_sandboxed: bool = False
     rate_limit_per_minute: int = 60
+
 
 class UniversalToolRuntime:
     """
@@ -35,7 +37,9 @@ class UniversalToolRuntime:
         self._metadata[key] = metadata
         logger.info(f"Installed Tool in Universal Runtime: {key}")
 
-    async def execute_tool(self, name: str, version: str, parameters: dict[str, Any], tenant_id: str) -> Any:
+    async def execute_tool(
+        self, name: str, version: str, parameters: dict[str, Any], tenant_id: str
+    ) -> Any:
         """
         Executes a tool with caching, rate-limiting, and auditing wrappers.
         """

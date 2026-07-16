@@ -13,6 +13,7 @@ class MemoryCache(ICache):
     In-memory L1 cache. Used as a fallback or for extremely hot paths
     like Configuration reads to avoid Redis network hops.
     """
+
     def __init__(self) -> None:
         # Map of key -> (value, expires_at_timestamp)
         self._store: dict[str, tuple[Any, float | None]] = {}

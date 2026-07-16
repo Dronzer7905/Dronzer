@@ -8,14 +8,17 @@ logger = structlog.get_logger("dronzer.security")
 
 class EncryptionManager:
     """
-    Handles encryption/decryption of sensitive database fields 
+    Handles encryption/decryption of sensitive database fields
     (like API keys and plugin secrets) using Fernet symmetric encryption.
     """
+
     def __init__(self) -> None:
         try:
             self._fernet = Fernet(settings.SECRET_KEY.encode())
         except ValueError as e:
-            logger.error("FATAL: SECRET_KEY is not a valid 32-byte base64-encoded Fernet key. Server cannot start.")
+            logger.error(
+                "FATAL: SECRET_KEY is not a valid 32-byte base64-encoded Fernet key. Server cannot start."
+            )
             raise ValueError("Invalid SECRET_KEY format. Must be a valid Fernet key.") from e
 
     def encrypt(self, plain_text: str) -> str:

@@ -4,10 +4,11 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.evaluator")
 
+
 class LLMJudgeEvaluator:
     """
     Executes 'LLM-as-a-Judge' pipelines.
-    Runs a target Prompt against a Dataset, and then uses a superior 'Judge' model 
+    Runs a target Prompt against a Dataset, and then uses a superior 'Judge' model
     (e.g., GPT-4 or Claude-3.5-Sonnet) to score the outputs on multiple criteria:
     - Factual Accuracy
     - Helpfulness
@@ -26,12 +27,19 @@ class LLMJudgeEvaluator:
         Return a JSON object with 'score' and 'reasoning'.
         """
 
-    async def run_evaluation_pipeline(self, prompt_version_id: str, dataset_records: list[dict[str, Any]], judge_model: str = "gpt-4o"):
+    async def run_evaluation_pipeline(
+        self,
+        prompt_version_id: str,
+        dataset_records: list[dict[str, Any]],
+        judge_model: str = "gpt-4o",
+    ):
         """
-        Executes a full evaluation run. 
+        Executes a full evaluation run.
         In production, this should be dispatched to the Distributed Scheduler for async processing.
         """
-        logger.info(f"Starting Evaluation Pipeline for prompt {prompt_version_id} using {judge_model}")
+        logger.info(
+            f"Starting Evaluation Pipeline for prompt {prompt_version_id} using {judge_model}"
+        )
 
         results = []
         total_score = 0
@@ -39,21 +47,16 @@ class LLMJudgeEvaluator:
         for record in dataset_records:
             # 1. Execute target prompt
             # generated_output = await self.gateway.execute_prompt(prompt_version_id, record["input"])
-            generated_output = "def add(x, y): return x + y" # Mock execution
+            generated_output = "def add(x, y): return x + y"  # Mock execution
 
             # 2. Ask the Judge to score it
             score_card = await self._call_judge(
-                judge_model,
-                record["input"],
-                generated_output,
-                record.get("expected_output", "")
+                judge_model, record["input"], generated_output, record.get("expected_output", "")
             )
 
-            results.append({
-                "input": record["input"],
-                "generated": generated_output,
-                "score_card": score_card
-            })
+            results.append(
+                {"input": record["input"], "generated": generated_output, "score_card": score_card}
+            )
             total_score += score_card["score"]
 
         avg_score = total_score / len(dataset_records) if dataset_records else 0
@@ -64,15 +67,17 @@ class LLMJudgeEvaluator:
             "prompt_version_id": prompt_version_id,
             "average_score": avg_score,
             "total_records": len(dataset_records),
-            "results": results
+            "results": results,
         }
 
-    async def _call_judge(self, judge_model: str, user_input: Any, generated: str, expected: str) -> dict[str, Any]:
+    async def _call_judge(
+        self, judge_model: str, user_input: Any, generated: str, expected: str
+    ) -> dict[str, Any]:
         """
         Sends the grading request to the Judge LLM.
         """
         # Mocking the LLM judge response
         return {
             "score": 5,
-            "reasoning": "The generated code is accurate and perfectly matches the expected logical output."
+            "reasoning": "The generated code is accurate and perfectly matches the expected logical output.",
         }

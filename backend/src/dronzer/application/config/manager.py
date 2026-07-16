@@ -15,6 +15,7 @@ class ConfigurationManager:
     Manages fetching and hot-reloading dynamic configuration from the DB.
     Combines BaseSettings (env) with dynamic overrides (DB).
     """
+
     CACHE_KEY = "dronzer:config:system_settings"
 
     def __init__(self, cache: ICache, event_bus: IEventBus | None = None) -> None:

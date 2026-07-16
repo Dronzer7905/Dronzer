@@ -8,6 +8,7 @@ from sqlalchemy.sql import func
 
 class Base(DeclarativeBase):
     """Base declarative class for all SQLAlchemy models."""
+
     pass
 
 
@@ -18,21 +19,22 @@ def utcnow() -> datetime:
 
 class UUIDMixin:
     """Provides a UUID primary key."""
+
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
 
 
 class TimestampMixin:
     """Provides created_at and updated_at columns."""
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now()
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
 
 class SoftDeleteMixin:
     """Provides soft-delete capabilities."""
+
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
 

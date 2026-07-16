@@ -5,6 +5,7 @@ from dronzer.application.admin.auth import AuthService
 security = HTTPBearer()
 auth_service = AuthService()
 
+
 def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     try:

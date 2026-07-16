@@ -8,6 +8,7 @@ from dronzer.core.config import settings
 router = APIRouter()
 START_TIME = time.time()
 
+
 @router.get("/health", response_model=dict[str, Any])
 async def health_check() -> dict[str, Any]:
     """
@@ -19,5 +20,5 @@ async def health_check() -> dict[str, Any]:
         "app": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.ENVIRONMENT.value,
-        "uptime_seconds": round(uptime, 2)
+        "uptime_seconds": round(uptime, 2),
     }

@@ -16,7 +16,9 @@ class IPluginHook(Protocol):
         """Called immediately before candidates are scored."""
         return context
 
-    async def after_response(self, response: dict[str, Any], context: DecisionContext) -> dict[str, Any]:
+    async def after_response(
+        self, response: dict[str, Any], context: DecisionContext
+    ) -> dict[str, Any]:
         """Called after a successful upstream LLM response is received."""
         return response
 

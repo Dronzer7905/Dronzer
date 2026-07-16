@@ -9,6 +9,7 @@ from redis.asyncio import Redis
 
 logger = structlog.get_logger("dronzer.worker.queue")
 
+
 class BackgroundWorker:
     """
     Enterprise asynchronous background worker using Redis.
@@ -27,7 +28,14 @@ class BackgroundWorker:
         self.registry[task_name] = func
         logger.info("Task registered", task_name=task_name)
 
-    async def enqueue(self, task_name: str, payload: dict, priority: int = 0, delay_seconds: int = 0, max_retries: int = 3):
+    async def enqueue(
+        self,
+        task_name: str,
+        payload: dict,
+        priority: int = 0,
+        delay_seconds: int = 0,
+        max_retries: int = 3,
+    ):
         """Enqueues a job. High priority tasks (higher number) jump the line."""
         job_id = str(uuid.uuid4())
         job = {
@@ -36,7 +44,7 @@ class BackgroundWorker:
             "payload": payload,
             "retries_left": max_retries,
             "max_retries": max_retries,
-            "created_at": datetime.now(UTC).isoformat()
+            "created_at": datetime.now(UTC).isoformat(),
         }
 
         if delay_seconds > 0:
@@ -70,7 +78,7 @@ class BackgroundWorker:
                 delayed_jobs = await self.redis.zrangebyscore(f"{self.queue_name}:delayed", 0, now)
                 for dj in delayed_jobs:
                     await self.redis.zrem(f"{self.queue_name}:delayed", dj)
-                    await self.redis.zadd(self.queue_name, {dj: 0}) # Move to active queue
+                    await self.redis.zadd(self.queue_name, {dj: 0})  # Move to active queue
 
                 # 2. Process Active Jobs (Blocking pop highest priority)
                 # BZPOPMAX blocks until an item is available or timeout hits
@@ -101,7 +109,13 @@ class BackgroundWorker:
                         job["retries_left"] -= 1
                         # Exponential backoff retry
                         delay = (job["max_retries"] - job["retries_left"]) ** 2 * 5
-                        await self.enqueue(job["task"], job["payload"], priority=-1, delay_seconds=delay, max_retries=job["retries_left"])
+                        await self.enqueue(
+                            job["task"],
+                            job["payload"],
+                            priority=-1,
+                            delay_seconds=delay,
+                            max_retries=job["retries_left"],
+                        )
                     else:
                         await self._move_dlq(job, str(e))
 

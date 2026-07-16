@@ -7,10 +7,11 @@ from dronzer.domain.integration.mcp.server import MCPServer
 
 logger = structlog.get_logger("dronzer.integration.mcp.gateway")
 
+
 class MCPGateway:
     """
     The secure entrypoint for all Model Context Protocol (MCP) traffic.
-    Authenticates incoming SSE requests, enforces Organization Policies via RBAC, 
+    Authenticates incoming SSE requests, enforces Organization Policies via RBAC,
     and bridges the traffic to the internal MCPServer engine.
     """
 
@@ -18,7 +19,9 @@ class MCPGateway:
         self.mcp_server = mcp_server
         self.policy_engine = policy_engine
 
-    async def handle_incoming_sse_request(self, api_key: str, rpc_payload: dict[str, Any]) -> dict[str, Any]:
+    async def handle_incoming_sse_request(
+        self, api_key: str, rpc_payload: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Validates the request and routes it to the MCP Server.
         """
@@ -34,9 +37,7 @@ class MCPGateway:
 
         # 2. Enforce Organization Level Policies (e.g. are they allowed to expose MCP tools?)
         is_allowed = self.policy_engine.evaluate_access(
-            user_id=org_id,
-            action="mcp_access",
-            resource=method
+            user_id=org_id, action="mcp_access", resource=method
         )
 
         if not is_allowed:

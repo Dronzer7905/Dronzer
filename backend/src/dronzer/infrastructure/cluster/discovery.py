@@ -6,10 +6,11 @@ from dronzer.infrastructure.database.models.cluster.core import ClusterNode
 
 logger = structlog.get_logger("dronzer.cluster.discovery")
 
+
 class ServiceRegistry:
     """
     Provides Dynamic Discovery for Dronzer Services.
-    Allows the Global Router to find healthy nodes across the global cluster 
+    Allows the Global Router to find healthy nodes across the global cluster
     that match specific capabilities (e.g. "needs GPU", "needs compliance=EU").
     """
 
@@ -39,8 +40,18 @@ class ServiceRegistry:
 
         # Mocking active nodes
         nodes = [
-            {"id": "node_aws_useast1_01", "region": "us-east-1", "capabilities": {"gpu": True}, "weight": 100},
-            {"id": "node_gcp_euwest3_02", "region": "eu-west-3", "capabilities": {"gpu": False, "compliance": "gdpr"}, "weight": 50}
+            {
+                "id": "node_aws_useast1_01",
+                "region": "us-east-1",
+                "capabilities": {"gpu": True},
+                "weight": 100,
+            },
+            {
+                "id": "node_gcp_euwest3_02",
+                "region": "eu-west-3",
+                "capabilities": {"gpu": False, "compliance": "gdpr"},
+                "weight": 50,
+            },
         ]
 
         if not required_capabilities:

@@ -6,6 +6,7 @@ from dronzer.domain.knowledge.memory_engine import MemoryEngine
 
 logger = structlog.get_logger("dronzer.agents.memory")
 
+
 class SharedTeamMemory:
     """
     Provides a shared memory context for a Multi-Agent team.
@@ -25,7 +26,9 @@ class SharedTeamMemory:
         self._working_memory.append({"source": agent_name, "fact": fact})
 
         # Persist to Long-Term RAG memory asynchronously
-        await self.memory_engine.add_turn(self.session_id, role="system", content=f"[{agent_name} discovered]: {fact}")
+        await self.memory_engine.add_turn(
+            self.session_id, role="system", content=f"[{agent_name} discovered]: {fact}"
+        )
 
     async def get_working_memory_context(self) -> str:
         """

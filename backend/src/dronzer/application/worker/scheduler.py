@@ -6,6 +6,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.worker.scheduler")
 
+
 class CronScheduler:
     """
     Enterprise cron scheduler for periodic background tasks.
@@ -22,12 +23,14 @@ class CronScheduler:
         if not croniter.croniter.is_valid(cron_expr):
             raise ValueError(f"Invalid cron expression: {cron_expr}")
 
-        self.jobs.append({
-            "cron": cron_expr,
-            "task": task_name,
-            "payload": payload or {},
-            "next_run": croniter.croniter(cron_expr, datetime.now(UTC)).get_next(datetime)
-        })
+        self.jobs.append(
+            {
+                "cron": cron_expr,
+                "task": task_name,
+                "payload": payload or {},
+                "next_run": croniter.croniter(cron_expr, datetime.now(UTC)).get_next(datetime),
+            }
+        )
         logger.info("Scheduled cron job", task=task_name, cron=cron_expr)
 
     async def start(self):

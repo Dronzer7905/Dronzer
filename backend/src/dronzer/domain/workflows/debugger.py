@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.workflows.debugger")
 
+
 class TimelineEvent(BaseModel):
     node_id: str
     status: str
@@ -12,6 +13,7 @@ class TimelineEvent(BaseModel):
     inputs: dict[str, Any]
     outputs: dict[str, Any]
     error: str = None
+
 
 class WorkflowDebugger:
     """
@@ -37,7 +39,7 @@ class WorkflowDebugger:
                 status="COMPLETED",
                 duration_ms=12,
                 inputs={"user_query": "Hello"},
-                outputs={"parsed_query": "Hello"}
+                outputs={"parsed_query": "Hello"},
             ),
             TimelineEvent(
                 node_id="node_llm_1",
@@ -45,18 +47,20 @@ class WorkflowDebugger:
                 duration_ms=450,
                 inputs={"prompt": "Hello"},
                 outputs={},
-                error="Rate limit exceeded for gpt-4-turbo"
-            )
+                error="Rate limit exceeded for gpt-4-turbo",
+            ),
         ]
 
         return timeline
 
     async def replay_from_node(self, execution_id: str, node_id: str, new_inputs: dict[str, Any]):
         """
-        Allows a developer to alter the variables at a specific failed node 
+        Allows a developer to alter the variables at a specific failed node
         and restart the WorkflowEngine from that point forward (saving time and tokens).
         """
-        logger.info("Replaying workflow from breakpoint", execution_id=execution_id, node_id=node_id)
+        logger.info(
+            "Replaying workflow from breakpoint", execution_id=execution_id, node_id=node_id
+        )
         # 1. Fetch Execution
         # 2. Reset status of `node_id` and all downstream topological nodes to PENDING
         # 3. Patch `execution_state["global"]` with `new_inputs`

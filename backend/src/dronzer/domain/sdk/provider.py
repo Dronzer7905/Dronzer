@@ -16,11 +16,13 @@ class ProviderCapabilities(BaseModel):
     structured_outputs: bool = False
     tool_calling: bool = False
 
+
 class DiscoveredModel(BaseModel):
     id: str
     name: str
     context_window: int
     capabilities: ProviderCapabilities
+
 
 class IProvider(ABC):
     """
@@ -40,17 +42,23 @@ class IProvider(ABC):
         pass
 
     @abstractmethod
-    async def discover_models(self, api_key: str, base_url: str | None = None) -> list[DiscoveredModel]:
+    async def discover_models(
+        self, api_key: str, base_url: str | None = None
+    ) -> list[DiscoveredModel]:
         """Dynamically fetches available models from the provider's API."""
         pass
 
     @abstractmethod
-    async def generate_chat(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> dict[str, Any]:
+    async def generate_chat(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> dict[str, Any]:
         """Executes a standard chat completion request."""
         pass
 
     @abstractmethod
-    async def generate_stream(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> AsyncGenerator[dict[str, Any]]:
+    async def generate_stream(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> AsyncGenerator[dict[str, Any]]:
         """Executes a streaming chat completion request."""
         pass
 

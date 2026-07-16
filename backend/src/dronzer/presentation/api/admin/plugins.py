@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 logger = structlog.get_logger("dronzer.api.admin.plugins")
 router = APIRouter(prefix="/plugins", tags=["Admin Plugins"])
 
+
 @router.get("")
 async def list_plugins(request: Request) -> list[dict[str, Any]]:
     """
@@ -19,13 +20,16 @@ async def list_plugins(request: Request) -> list[dict[str, Any]]:
     results = []
     for name, plugin in loader._loaded_plugins.items():
         meta = plugin.metadata
-        results.append({
-            "name": meta.name,
-            "version": meta.version,
-            "author": meta.author,
-            "description": meta.description
-        })
+        results.append(
+            {
+                "name": meta.name,
+                "version": meta.version,
+                "author": meta.author,
+                "description": meta.description,
+            }
+        )
     return results
+
 
 @router.post("/reload")
 async def reload_plugins(request: Request):

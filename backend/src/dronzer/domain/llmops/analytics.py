@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.analytics")
 
+
 class AnalyticsEngine:
     """
     Aggregates LLM usage telemetry (Tokens, Costs, Latency, Errors)
@@ -21,7 +22,7 @@ class AnalyticsEngine:
 
         # Mock aggregation query
         total_executions = 45000
-        error_rate = 1.2 # percent
+        error_rate = 1.2  # percent
         avg_latency_ms = 850
         total_cost_usd = 125.50
 
@@ -32,13 +33,13 @@ class AnalyticsEngine:
                 "total_executions": total_executions,
                 "error_rate_pct": error_rate,
                 "average_latency_ms": avg_latency_ms,
-                "total_cost_usd": total_cost_usd
+                "total_cost_usd": total_cost_usd,
             },
             "timeseries": [
                 {"date": "2026-07-01", "executions": 5000, "cost": 15.0},
                 {"date": "2026-07-02", "executions": 6500, "cost": 18.2},
                 # ...
-            ]
+            ],
         }
 
     async def get_global_cost_report(self, days: int = 30) -> dict[str, Any]:
@@ -48,9 +49,5 @@ class AnalyticsEngine:
         logger.info("Generating Global LLM Cost Report")
         return {
             "total_spend": 5420.00,
-            "breakdown_by_provider": {
-                "openai": 3200.00,
-                "anthropic": 1800.00,
-                "google": 420.00
-            }
+            "breakdown_by_provider": {"openai": 3200.00, "anthropic": 1800.00, "google": 420.00},
         }

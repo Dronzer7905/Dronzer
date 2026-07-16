@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.marketplace.updater")
 
+
 class AutoUpdateEngine:
     """
     Manages the lifecycle of installed packages.
@@ -17,7 +18,7 @@ class AutoUpdateEngine:
 
     async def check_for_updates(self, installed_packages: list[dict[str, str]]):
         """
-        Polls the Marketplace registry to see if any installed package has a newer 
+        Polls the Marketplace registry to see if any installed package has a newer
         compatible version (e.g. minor or patch updates according to SemVer).
         """
         logger.info("Scanning installed packages for available updates...")
@@ -26,7 +27,9 @@ class AutoUpdateEngine:
         # Mock logic
         for pkg in installed_packages:
             if pkg["name"] == "@google/gemini-provider" and pkg["version"] == "1.0.0":
-                updates_available.append({"package": pkg["name"], "current": "1.0.0", "latest": "1.1.0"})
+                updates_available.append(
+                    {"package": pkg["name"], "current": "1.0.0", "latest": "1.1.0"}
+                )
 
         return updates_available
 
@@ -48,7 +51,9 @@ class AutoUpdateEngine:
         """
         Reverts an upgrade if the new version fails health checks or causes runtime exceptions.
         """
-        logger.warning(f"CRITICAL: Rolling back {package_name} to stable version {previous_version}")
+        logger.warning(
+            f"CRITICAL: Rolling back {package_name} to stable version {previous_version}"
+        )
 
         # 1. Restore previous database references
         # 2. Restore previous cached binaries

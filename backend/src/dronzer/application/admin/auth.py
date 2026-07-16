@@ -7,6 +7,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.admin.auth")
 
+
 class AuthService:
     """
     Handles JWT generation, password hashing, and session tokens for the admin dashboard.

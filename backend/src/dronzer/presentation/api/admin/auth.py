@@ -10,17 +10,21 @@ router = APIRouter(prefix="/auth", tags=["Admin Auth"])
 # In reality, this would be injected globally via FastAPI Depends
 auth_service = AuthService()
 
+
 class LoginRequest(BaseModel):
     email: str
     password: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
 
+
 class RefreshRequest(BaseModel):
     refresh_token: str
+
 
 @router.post("/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
@@ -32,8 +36,12 @@ async def login(request: LoginRequest):
     # MOCK DB LOOKUP (Foundation Phase 15 logic mapping)
     mock_user_hash = auth_service.hash_password("admin123")
 
-    if request.email == "admin@dronzer.ai" and auth_service.verify_password(request.password, mock_user_hash):
-        access_token = auth_service.create_access_token(data={"sub": request.email, "role": "SUPER_ADMIN"})
+    if request.email == "admin@dronzer.ai" and auth_service.verify_password(
+        request.password, mock_user_hash
+    ):
+        access_token = auth_service.create_access_token(
+            data={"sub": request.email, "role": "SUPER_ADMIN"}
+        )
         refresh_token = auth_service.create_refresh_token(subject=request.email)
 
         logger.info("Admin login successful", email=request.email)
@@ -45,6 +53,7 @@ async def login(request: LoginRequest):
         detail="Incorrect email or password",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(request: RefreshRequest):

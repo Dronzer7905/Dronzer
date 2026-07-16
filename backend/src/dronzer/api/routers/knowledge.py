@@ -7,16 +7,19 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 class CollectionCreate(BaseModel):
     name: str
     space_id: str
     embedding_model: str = "text-embedding-3-small"
+
 
 class RetrievalQuery(BaseModel):
     query: str
     collection_name: str
     top_k: int = 5
     rerank: bool = True
+
 
 @router.post("/collections", status_code=status.HTTP_201_CREATED)
 async def create_collection(collection: CollectionCreate):
@@ -26,6 +29,7 @@ async def create_collection(collection: CollectionCreate):
     # Logic to create KnowledgeCollection in DB and Qdrant
     return {"id": "col_12345", "name": collection.name, "space_id": collection.space_id}
 
+
 @router.post("/collections/{collection_name}/documents")
 async def upload_document(collection_name: str, file: UploadFile = File(...)):
     """
@@ -34,6 +38,7 @@ async def upload_document(collection_name: str, file: UploadFile = File(...)):
     # Save file to temp storage or S3
     # Enqueue Background Task: DocumentIngestionPipeline.process_document()
     return {"message": f"Document '{file.filename}' queued for ingestion into '{collection_name}'."}
+
 
 @router.post("/retrieve")
 async def retrieve_chunks(query: RetrievalQuery):
@@ -47,7 +52,7 @@ async def retrieve_chunks(query: RetrievalQuery):
             {
                 "id": "doc_example_chunk_0",
                 "score": 0.95,
-                "text": "This is a retrieved chunk of highly relevant knowledge."
+                "text": "This is a retrieved chunk of highly relevant knowledge.",
             }
-        ]
+        ],
     }

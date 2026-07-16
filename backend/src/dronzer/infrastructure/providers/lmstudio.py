@@ -9,6 +9,7 @@ from dronzer.domain.sdk.provider import DiscoveredModel, IProvider, ProviderCapa
 
 logger = structlog.get_logger("dronzer.providers.lmstudio")
 
+
 class LMStudioProvider(IProvider):
     """
     LM Studio Local API integration (OpenAI compatible).
@@ -23,7 +24,7 @@ class LMStudioProvider(IProvider):
             images=False,
             streaming=True,
             json_mode=True,
-            tool_calling=True
+            tool_calling=True,
         )
 
     @property
@@ -33,7 +34,9 @@ class LMStudioProvider(IProvider):
     async def get_capabilities(self) -> ProviderCapabilities:
         return self._capabilities
 
-    async def discover_models(self, api_key: str, base_url: str | None = None) -> list[DiscoveredModel]:
+    async def discover_models(
+        self, api_key: str, base_url: str | None = None
+    ) -> list[DiscoveredModel]:
         url = f"{base_url or self.default_base_url}/models"
 
         async with httpx.AsyncClient() as client:
@@ -43,15 +46,19 @@ class LMStudioProvider(IProvider):
 
             models = []
             for item in data.get("data", []):
-                models.append(DiscoveredModel(
-                    id=item["id"],
-                    name=item["id"],
-                    context_window=4096, # LM Studio usually runs limited context GGUFs
-                    capabilities=self._capabilities
-                ))
+                models.append(
+                    DiscoveredModel(
+                        id=item["id"],
+                        name=item["id"],
+                        context_window=4096,  # LM Studio usually runs limited context GGUFs
+                        capabilities=self._capabilities,
+                    )
+                )
             return models
 
-    async def generate_chat(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> dict[str, Any]:
+    async def generate_chat(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> dict[str, Any]:
         url = f"{base_url or self.default_base_url}/chat/completions"
         headers = {"Content-Type": "application/json"}
 
@@ -60,13 +67,17 @@ class LMStudioProvider(IProvider):
             response.raise_for_status()
             return response.json()
 
-    async def generate_stream(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> AsyncGenerator[dict[str, Any]]:
+    async def generate_stream(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> AsyncGenerator[dict[str, Any]]:
         url = f"{base_url or self.default_base_url}/chat/completions"
         headers = {"Content-Type": "application/json"}
         payload["stream"] = True
 
         async with httpx.AsyncClient() as client:
-            async with client.stream("POST", url, headers=headers, json=payload, timeout=300.0) as response:
+            async with client.stream(
+                "POST", url, headers=headers, json=payload, timeout=300.0
+            ) as response:
                 response.raise_for_status()
                 async for line in response.aiter_lines():
                     if line.startswith("data: ") and line != "data: [DONE]":

@@ -4,10 +4,11 @@ import structlog
 
 logger = structlog.get_logger("dronzer.marketplace.resolver")
 
+
 class DependencyResolver:
     """
     Resolves complex, nested package dependency trees.
-    Builds a Directed Acyclic Graph (DAG) to ensure all required 
+    Builds a Directed Acyclic Graph (DAG) to ensure all required
     child packages are installed before the parent package.
     Detects circular dependencies and Semantic Version conflicts.
     """
@@ -15,7 +16,9 @@ class DependencyResolver:
     def __init__(self, registry_client: Any = None):
         self.registry = registry_client
 
-    async def resolve_install_graph(self, package_name: str, requested_version: str) -> list[dict[str, str]]:
+    async def resolve_install_graph(
+        self, package_name: str, requested_version: str
+    ) -> list[dict[str, str]]:
         """
         Calculates the flat installation order required to install the requested package
         and all of its nested dependencies without conflicts.

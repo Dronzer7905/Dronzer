@@ -5,25 +5,31 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.enterprise.vault")
 
+
 class SecretReference(BaseModel):
     """
     Pointer to a vaulted secret. Keeps raw credentials out of the database.
     """
+
     secret_id: str
     version: int
-    engine: str # e.g. "hashicorp", "aws_kms", "azure_keyvault"
+    engine: str  # e.g. "hashicorp", "aws_kms", "azure_keyvault"
     organization_id: str
+
 
 class SecretVaultManager:
     """
     Abstracts interaction with Enterprise Secret Managers.
     Handles encryption, versioning, rotation, and lease tracking.
     """
+
     def __init__(self, provider: str = "local"):
         self.provider = provider
         # In a real environment, this would hold the HashiCorp HVAC client or AWS Boto3 client
 
-    async def store_secret(self, organization_id: str, secret_name: str, raw_value: str) -> SecretReference:
+    async def store_secret(
+        self, organization_id: str, secret_name: str, raw_value: str
+    ) -> SecretReference:
         """
         Encrypts and stores a secret in the vault.
         Returns a reference to be stored in the primary database.
@@ -31,13 +37,15 @@ class SecretVaultManager:
         secret_id = str(uuid.uuid4())
 
         # Simulated encryption and vaulting
-        logger.info("Secret vaulted securely", org_id=organization_id, secret_name=secret_name, provider=self.provider)
+        logger.info(
+            "Secret vaulted securely",
+            org_id=organization_id,
+            secret_name=secret_name,
+            provider=self.provider,
+        )
 
         return SecretReference(
-            secret_id=secret_id,
-            version=1,
-            engine=self.provider,
-            organization_id=organization_id
+            secret_id=secret_id, version=1, engine=self.provider, organization_id=organization_id
         )
 
     async def retrieve_secret(self, ref: SecretReference) -> str | None:

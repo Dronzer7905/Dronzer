@@ -8,6 +8,7 @@ from dronzer.infrastructure.database.base import Base, SoftDeleteMixin, Timestam
 
 class Provider(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     """AI Providers (e.g., OpenAI, Anthropic)."""
+
     __tablename__ = "providers"
 
     name: Mapped[str] = mapped_column(String(255), unique=True)
@@ -20,6 +21,7 @@ class Provider(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
 
 class ProviderGroup(Base, UUIDMixin, TimestampMixin):
     """Logical grouping of providers for routing."""
+
     __tablename__ = "provider_groups"
 
     name: Mapped[str] = mapped_column(String(255), unique=True)
@@ -28,6 +30,7 @@ class ProviderGroup(Base, UUIDMixin, TimestampMixin):
 
 class Model(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     """Specific AI Models (e.g., gpt-4, claude-3)."""
+
     __tablename__ = "models"
 
     name: Mapped[str] = mapped_column(String(255), index=True)
@@ -41,6 +44,7 @@ class Model(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
 
 class ModelGroup(Base, UUIDMixin, TimestampMixin):
     """Grouping for capability-based routing (e.g., 'gpt-4-class')."""
+
     __tablename__ = "model_groups"
 
     name: Mapped[str] = mapped_column(String(255), unique=True)
@@ -48,18 +52,24 @@ class ModelGroup(Base, UUIDMixin, TimestampMixin):
 
 class APIKeyPool(Base, UUIDMixin, TimestampMixin):
     """Pool of API keys for rotation."""
+
     __tablename__ = "api_key_pools"
 
     name: Mapped[str] = mapped_column(String(255), unique=True)
-    organization_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True)
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True
+    )
 
 
 class APIKey(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     """API Keys for providers. Encrypted at rest."""
+
     __tablename__ = "api_keys"
 
     provider_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("providers.id", ondelete="CASCADE"))
-    pool_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("api_key_pools.id", ondelete="SET NULL"), nullable=True)
+    pool_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("api_key_pools.id", ondelete="SET NULL"), nullable=True
+    )
 
     # Store encrypted string, use EncryptionManager to encrypt/decrypt
     encrypted_key: Mapped[str] = mapped_column(String(1000))

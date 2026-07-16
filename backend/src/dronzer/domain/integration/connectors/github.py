@@ -6,6 +6,7 @@ from dronzer.domain.integration.connectors.base import BaseConnector, ConnectorA
 
 logger = structlog.get_logger("dronzer.integration.connectors.github")
 
+
 class GitHubConnector(BaseConnector):
     """
     Integrates with GitHub API.
@@ -21,16 +22,23 @@ class GitHubConnector(BaseConnector):
             ConnectorAction(
                 name="get_issue",
                 description="Fetches details of a specific GitHub issue.",
-                parameters_schema={"repo": "string", "issue_number": "integer"}
+                parameters_schema={"repo": "string", "issue_number": "integer"},
             ),
             ConnectorAction(
                 name="create_pull_request",
                 description="Creates a new Pull Request.",
-                parameters_schema={"repo": "string", "title": "string", "head": "string", "base": "string"}
-            )
+                parameters_schema={
+                    "repo": "string",
+                    "title": "string",
+                    "head": "string",
+                    "base": "string",
+                },
+            ),
         ]
 
-    async def execute_action(self, action_name: str, params: dict[str, Any], credentials: dict[str, str]) -> Any:
+    async def execute_action(
+        self, action_name: str, params: dict[str, Any], credentials: dict[str, str]
+    ) -> Any:
         logger.info(f"Executing GitHub Connector Action: {action_name}")
 
         token = credentials.get("github_token")

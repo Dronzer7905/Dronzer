@@ -11,13 +11,16 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 class OrganizationCreate(BaseModel):
     name: str
     slug: str
 
+
 class ProjectCreate(BaseModel):
     name: str
     monthly_budget_usd: float = 100.0
+
 
 @router.post("/organizations", status_code=status.HTTP_201_CREATED)
 async def create_organization(org: OrganizationCreate):
@@ -28,12 +31,14 @@ async def create_organization(org: OrganizationCreate):
     # Logic to create Organization and default Roles
     return {"id": "org_12345", "name": org.name, "slug": org.slug}
 
+
 @router.post("/organizations/{org_id}/projects", status_code=status.HTTP_201_CREATED)
 async def create_project(org_id: str, project: ProjectCreate):
     """
     Create a sub-tenant isolated environment for API Key partitioning.
     """
     return {"id": "proj_abcde", "organization_id": org_id, "name": project.name}
+
 
 @router.get("/organizations/{org_id}/billing/invoice")
 async def get_monthly_invoice(org_id: str, month: str):
@@ -47,9 +52,10 @@ async def get_monthly_invoice(org_id: str, month: str):
         "total_usd": 124.50,
         "line_items": [
             {"project": "Prod-App", "model": "gpt-4", "cost_usd": 100.00},
-            {"project": "Dev-App", "model": "gpt-3.5-turbo", "cost_usd": 24.50}
-        ]
+            {"project": "Dev-App", "model": "gpt-3.5-turbo", "cost_usd": 24.50},
+        ],
     }
+
 
 @router.get("/organizations/{org_id}/audit-logs")
 async def get_audit_logs(org_id: str, limit: int = 50):
@@ -62,7 +68,7 @@ async def get_audit_logs(org_id: str, limit: int = 50):
                 "event_id": "evt_001",
                 "timestamp": "2026-07-09T10:00:00Z",
                 "action": "api_key.created",
-                "actor_id": "user_789"
+                "actor_id": "user_789",
             }
         ]
     }

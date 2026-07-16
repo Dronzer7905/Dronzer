@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 logger = structlog.get_logger("dronzer.api.errors")
 
+
 def register_error_handlers(app: FastAPI) -> None:
     """
     Registers global exception handlers mapping internal Python errors to OpenAI-compatible JSON responses.
@@ -22,9 +23,9 @@ def register_error_handlers(app: FastAPI) -> None:
                     "type": "invalid_request_error",
                     "param": exc.errors()[0].get("loc", [""])[-1] if exc.errors() else None,
                     "code": None,
-                    "details": exc.errors()
+                    "details": exc.errors(),
                 }
-            }
+            },
         )
 
     @app.exception_handler(Exception)
@@ -38,7 +39,7 @@ def register_error_handlers(app: FastAPI) -> None:
                     "message": "The server had an error processing your request.",
                     "type": "server_error",
                     "param": None,
-                    "code": "internal_error"
+                    "code": "internal_error",
                 }
-            }
+            },
         )

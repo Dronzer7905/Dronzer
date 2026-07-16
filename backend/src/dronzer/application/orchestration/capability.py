@@ -16,7 +16,7 @@ class CapabilityEngine:
         Parses the payload and returns a list of required capabilities.
         Example: ["chat", "vision", "json_mode"]
         """
-        capabilities = ["chat"] # Default assumption for completions API
+        capabilities = ["chat"]  # Default assumption for completions API
 
         # Detect Vision
         messages = payload.get("messages", [])

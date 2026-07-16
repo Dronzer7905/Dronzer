@@ -7,6 +7,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.marketplace.engine")
 
+
 class SemanticVersion:
     """Utility for comparing Semantic Versions (e.g. 1.2.0 > 1.1.9)"""
 
@@ -28,10 +29,11 @@ class SemanticVersion:
             return SemanticVersion.parse(available) >= SemanticVersion.parse(req_ver)
         return available == required
 
+
 class PackageEngine:
     """
     Core engine responsible for parsing `.dzpkg` archives (which are just ZIPs),
-    extracting the `manifest.json`, and validating the package structure before 
+    extracting the `manifest.json`, and validating the package structure before
     it gets installed into the Dronzer ecosystem.
     """
 
@@ -42,12 +44,12 @@ class PackageEngine:
         logger.debug(f"Extracting manifest from {package_path}")
 
         try:
-            with zipfile.ZipFile(package_path, 'r') as zip_ref:
-                if 'manifest.json' not in zip_ref.namelist():
+            with zipfile.ZipFile(package_path, "r") as zip_ref:
+                if "manifest.json" not in zip_ref.namelist():
                     raise ValueError("Invalid .dzpkg: Missing manifest.json")
 
-                with zip_ref.open('manifest.json') as f:
-                    manifest = json.loads(f.read().decode('utf-8'))
+                with zip_ref.open("manifest.json") as f:
+                    manifest = json.loads(f.read().decode("utf-8"))
 
             self._validate_manifest(manifest)
             return manifest

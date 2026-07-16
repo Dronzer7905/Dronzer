@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 # Chat Completions Request Schemas
 # ---------------------------------------------------------
 
+
 class ChatMessage(BaseModel):
     role: Literal["system", "user", "assistant", "function", "tool"]
     content: str | list[dict[str, Any]]
@@ -13,24 +14,30 @@ class ChatMessage(BaseModel):
     tool_calls: list[dict[str, Any]] | None = None
     tool_call_id: str | None = None
 
+
 class ResponseFormat(BaseModel):
     type: Literal["text", "json_object"]
+
 
 class ToolFunction(BaseModel):
     name: str
     description: str | None = None
     parameters: dict[str, Any] | None = None
 
+
 class Tool(BaseModel):
     type: Literal["function"]
     function: ToolFunction
 
+
 class ToolChoiceFunction(BaseModel):
     name: str
+
 
 class ToolChoice(BaseModel):
     type: Literal["function"]
     function: ToolChoiceFunction
+
 
 class ChatCompletionRequest(BaseModel):
     model: str
@@ -52,25 +59,30 @@ class ChatCompletionRequest(BaseModel):
     tool_choice: Literal["none", "auto"] | ToolChoice | None = None
     user: str | None = None
 
+
 # ---------------------------------------------------------
 # Chat Completions Response Schemas
 # ---------------------------------------------------------
+
 
 class TokenUsage(BaseModel):
     prompt_tokens: int
     completion_tokens: int
     total_tokens: int
 
+
 class ChatCompletionMessage(BaseModel):
     role: str
     content: str | None = None
     tool_calls: list[dict[str, Any]] | None = None
+
 
 class ChatCompletionChoice(BaseModel):
     index: int
     message: ChatCompletionMessage
     finish_reason: str | None = None
     logprobs: Any | None = None
+
 
 class ChatCompletionResponse(BaseModel):
     id: str
@@ -81,9 +93,11 @@ class ChatCompletionResponse(BaseModel):
     choices: list[ChatCompletionChoice]
     usage: TokenUsage | None = None
 
+
 # ---------------------------------------------------------
 # Models Schemas
 # ---------------------------------------------------------
+
 
 class ModelCard(BaseModel):
     id: str
@@ -91,9 +105,11 @@ class ModelCard(BaseModel):
     created: int
     owned_by: str
 
+
 class ModelListResponse(BaseModel):
     object: str = "list"
     data: list[ModelCard]
+
 
 # ---------------------------------------------------------
 # Embeddings Schemas
@@ -104,6 +120,7 @@ class EmbeddingRequest(BaseModel):
     encoding_format: str | None = "float"
     dimensions: int | None = None
     user: str | None = None
+
 
 # ---------------------------------------------------------
 # Images Schemas

@@ -5,25 +5,30 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.enterprise.rbac")
 
+
 class ResourceContext(BaseModel):
     """
     Context about the resource being accessed for Attribute-Based Access Control (ABAC).
     """
-    resource_type: str # e.g., 'project', 'api_key', 'model'
+
+    resource_type: str  # e.g., 'project', 'api_key', 'model'
     resource_id: str
     organization_id: str
     project_id: str | None = None
-    attributes: dict[str, Any] = {} # e.g., {'is_production': True, 'cost_tier': 'premium'}
+    attributes: dict[str, Any] = {}  # e.g., {'is_production': True, 'cost_tier': 'premium'}
+
 
 class UserContext(BaseModel):
     """
     Context about the User requesting access.
     """
+
     user_id: str
     organization_id: str
-    roles: list[str] # List of role names or IDs
-    permissions: list[str] # Flattened list of all explicit permissions granted to this user
-    attributes: dict[str, Any] = {} # e.g., {'department': 'engineering', 'clearance': 'high'}
+    roles: list[str]  # List of role names or IDs
+    permissions: list[str]  # Flattened list of all explicit permissions granted to this user
+    attributes: dict[str, Any] = {}  # e.g., {'department': 'engineering', 'clearance': 'high'}
+
 
 class PolicyEngine:
     """
@@ -55,14 +60,21 @@ class PolicyEngine:
         """
         # Strict Tenant Isolation Rule: A user can never access resources outside their organization
         if user.organization_id != resource.organization_id:
-            logger.warning("ABAC Block: Cross-tenant access attempt", user_id=user.user_id, target_org=resource.organization_id)
+            logger.warning(
+                "ABAC Block: Cross-tenant access attempt",
+                user_id=user.user_id,
+                target_org=resource.organization_id,
+            )
             return False
 
         # Example dynamic policy checking
         if resource.resource_type == "api_key" and action == "delete":
             if resource.attributes.get("is_production") is True:
                 if user.attributes.get("department") != "engineering":
-                    logger.warning("ABAC Block: Non-engineer attempting to delete prod key", user_id=user.user_id)
+                    logger.warning(
+                        "ABAC Block: Non-engineer attempting to delete prod key",
+                        user_id=user.user_id,
+                    )
                     return False
 
         return True

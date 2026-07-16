@@ -21,6 +21,7 @@ class ExtensionLogFacade:
     def debug(self, msg: str, **kwargs):
         self._logger.debug(msg, **kwargs)
 
+
 class ExtensionCacheFacade:
     def __init__(self, cache: DistributedCache, extension_id: str):
         self._cache = cache
@@ -32,11 +33,13 @@ class ExtensionCacheFacade:
     async def set(self, key: str, value: Any, ttl_seconds: int = 3600) -> bool:
         return await self._cache.set(f"{self._prefix}{key}", value, ttl_seconds)
 
+
 class DronzerExtensionAPI:
     """
     The facade providing controlled access to Dronzer core services.
     Passed to ExtensionContext.
     """
+
     def __init__(self, extension_id: str, cache: DistributedCache):
         self.logger = ExtensionLogFacade(extension_id)
         self.cache = ExtensionCacheFacade(cache, extension_id)

@@ -6,10 +6,11 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.traces")
 
+
 class TraceEngine:
     """
     Provides deep Observability into LLM executions (PromptOps).
-    Records the exact inputs, compiled templates, raw model outputs, and metadata 
+    Records the exact inputs, compiled templates, raw model outputs, and metadata
     to debug specific AI failures or hallucinations.
     """
 
@@ -26,7 +27,9 @@ class TraceEngine:
         # In prod: Store trace state in memory or fast cache
         return trace_id
 
-    async def end_trace(self, trace_id: str, compiled_prompt: str, raw_response: str, metadata: dict[str, Any]):
+    async def end_trace(
+        self, trace_id: str, compiled_prompt: str, raw_response: str, metadata: dict[str, Any]
+    ):
         """
         Finalizes the Trace Span after the Model responds and archives it for the Dashboard.
         """
@@ -40,7 +43,7 @@ class TraceEngine:
             "token_usage": metadata.get("tokens", {}),
             "latency_ms": metadata.get("latency_ms", 0),
             "cost_usd": metadata.get("cost_usd", 0.0),
-            "provider": metadata.get("provider", "unknown")
+            "provider": metadata.get("provider", "unknown"),
         }
 
         # Async persist to DB (e.g. Elasticsearch / Postgres JSONB)

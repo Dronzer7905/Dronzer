@@ -5,6 +5,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.experiments")
 
+
 class ABExperimentEngine:
     """
     Manages active A/B tests between Prompt Versions or Models.
@@ -19,7 +20,7 @@ class ABExperimentEngine:
             "prompt_support_bot": {
                 "champion": "v1.2.0",
                 "challenger": "v2.0.0-rc1",
-                "traffic_split_pct": 10 # 10% of traffic goes to challenger
+                "traffic_split_pct": 10,  # 10% of traffic goes to challenger
             }
         }
 
@@ -44,7 +45,7 @@ class ABExperimentEngine:
             f"Traffic split decision for {prompt_name}",
             roll=round(roll, 2),
             threshold=experiment["traffic_split_pct"],
-            target_version=target_version
+            target_version=target_version,
         )
 
         return target_version

@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.tracker")
 
+
 class ExperimentTracker:
     """
     Monitors active A/B tests in real-time.
@@ -13,9 +14,11 @@ class ExperimentTracker:
 
     def __init__(self, db_session: Any = None):
         self.db = db_session
-        self.failure_threshold_pct = 5.0 # Rollback if error rate > 5%
+        self.failure_threshold_pct = 5.0  # Rollback if error rate > 5%
 
-    async def log_execution(self, prompt_name: str, version_tag: str, is_success: bool, latency_ms: int, cost_usd: float):
+    async def log_execution(
+        self, prompt_name: str, version_tag: str, is_success: bool, latency_ms: int, cost_usd: float
+    ):
         """
         Called by the API Gateway telemetry hook after every LLM execution.
         """
@@ -29,10 +32,12 @@ class ExperimentTracker:
         logger.info(f"Evaluating health for active experiment {experiment_id}")
 
         # Mock metrics retrieval
-        challenger_error_rate = 0.5 # 0.5% failure rate is acceptable
+        challenger_error_rate = 0.5  # 0.5% failure rate is acceptable
 
         if challenger_error_rate > self.failure_threshold_pct:
-            logger.error(f"CRITICAL: Challenger in experiment {experiment_id} breached error threshold ({challenger_error_rate}%). Triggering AUTOMATIC ROLLBACK.")
+            logger.error(
+                f"CRITICAL: Challenger in experiment {experiment_id} breached error threshold ({challenger_error_rate}%). Triggering AUTOMATIC ROLLBACK."
+            )
             await self._trigger_rollback(experiment_id)
 
     async def _trigger_rollback(self, experiment_id: str):

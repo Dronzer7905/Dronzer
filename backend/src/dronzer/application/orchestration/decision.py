@@ -14,7 +14,7 @@ logger = structlog.get_logger("dronzer.orchestration.decision")
 class DecisionIntelligenceEngine:
     """
     The Central Brain.
-    Orchestrates the selection of providers, models, and keys, and outputs 
+    Orchestrates the selection of providers, models, and keys, and outputs
     a deterministic ExecutionPlan for the pipeline.
     """
 
@@ -66,8 +66,10 @@ class DecisionIntelligenceEngine:
 
         # 4.5 Task-Aware Overrides (Gateway Key Custom Priority)
         if request_context.model_priorities:
-            priority_map = {str(m_id): idx for idx, m_id in enumerate(request_context.model_priorities)}
-            
+            priority_map = {
+                str(m_id): idx for idx, m_id in enumerate(request_context.model_priorities)
+            }
+
             def custom_sort(model):
                 m_str = str(model.id)
                 # If explicitly prioritized, put at the top in exact order
@@ -75,7 +77,7 @@ class DecisionIntelligenceEngine:
                     return (0, priority_map[m_str])
                 # Otherwise, fallback to the end (global pool)
                 return (1, 0)
-                
+
             ranked_models.sort(key=custom_sort)
 
         # 5. Select API Keys and build the fallback chain
@@ -86,7 +88,9 @@ class DecisionIntelligenceEngine:
         for model in ranked_models:
             keys = await self.key_engine.get_all_keys(model.provider_id, session)
             if not keys:
-                logger.warning("Skipping model due to lack of valid API keys", model_id=str(model.id))
+                logger.warning(
+                    "Skipping model due to lack of valid API keys", model_id=str(model.id)
+                )
                 continue
 
             for key in keys:
@@ -94,11 +98,9 @@ class DecisionIntelligenceEngine:
                     primary_model = model
                     primary_key = key
                 else:
-                    fallback_chain.append({
-                        "provider_id": model.provider_id,
-                        "model_id": model.id,
-                        "key_id": key.id
-                    })
+                    fallback_chain.append(
+                        {"provider_id": model.provider_id, "model_id": model.id, "key_id": key.id}
+                    )
 
         if not primary_model or not primary_key:
             raise Exception("Failed to secure a valid API key for any ranked models.")
@@ -109,14 +111,14 @@ class DecisionIntelligenceEngine:
             primary_model_id=primary_model.id,
             primary_key_id=primary_key.id,
             fallback_chain=fallback_chain,
-            is_streaming=request_context.payload.get("stream", False)
+            is_streaming=request_context.payload.get("stream", False),
         )
 
         decision_context.log_decision(
             step="DecisionComplete",
             action="GeneratedPlan",
             reason="Successfully built primary and fallback chain",
-            metadata={"primary_model": primary_model.name}
+            metadata={"primary_model": primary_model.name},
         )
 
         return plan

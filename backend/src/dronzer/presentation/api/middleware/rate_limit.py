@@ -8,11 +8,13 @@ from starlette.responses import JSONResponse
 
 logger = logging.getLogger("dronzer.api.middleware.rate_limit")
 
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     Enterprise-grade in-memory sliding window rate limiter.
     Ensures that high-volume API requests do not overwhelm the Gateway infrastructure.
     """
+
     def __init__(self, app, max_requests: int = 100, window_seconds: int = 60):
         super().__init__(app)
         self.max_requests = max_requests
@@ -26,7 +28,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         client_id = api_key if api_key else client_ip
 
         now = time.time()
-        
+
         # Clean up old timestamps outside the sliding window
         cutoff = now - self.window_seconds
         self.requests[client_id] = [t for t in self.requests[client_id] if t > cutoff]
@@ -38,9 +40,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 content={
                     "error": {
                         "code": "rate_limit_exceeded",
-                        "message": f"Too many requests. Limit is {self.max_requests} requests per {self.window_seconds}s."
+                        "message": f"Too many requests. Limit is {self.max_requests} requests per {self.window_seconds}s.",
                     }
-                }
+                },
             )
 
         # Allow request and record timestamp

@@ -6,6 +6,7 @@ router = APIRouter(
     tags=["Marketplace Public"],
 )
 
+
 @router.get("/search")
 async def search_packages(q: str = "", category: str = None):
     """
@@ -18,17 +19,18 @@ async def search_packages(q: str = "", category: str = None):
                 "type": "PROVIDER",
                 "version": "2.0.1",
                 "rating": 4.9,
-                "verified": True
+                "verified": True,
             },
             {
                 "name": "@community/github-tools",
                 "type": "PLUGIN",
                 "version": "1.1.0",
                 "rating": 4.2,
-                "verified": False
-            }
+                "verified": False,
+            },
         ]
     }
+
 
 @router.get("/packages/{namespace}/{package_name}")
 async def get_package_details(namespace: str, package_name: str):
@@ -40,12 +42,14 @@ async def get_package_details(namespace: str, package_name: str):
         "description": "Integration tools for GitHub repositories.",
         "latest_version": "1.1.0",
         "dependencies": {"@core/http": ">=1.0.0"},
-        "capabilities": ["network_access"]
+        "capabilities": ["network_access"],
     }
+
 
 class InstallRequest(BaseModel):
     package_id: str
     version: str = "latest"
+
 
 @router.post("/install", status_code=status.HTTP_202_ACCEPTED)
 async def install_package(req: InstallRequest):

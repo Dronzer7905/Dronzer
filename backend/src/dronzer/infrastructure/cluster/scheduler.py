@@ -8,14 +8,17 @@ from dronzer.infrastructure.cluster.router import GlobalRouter
 
 logger = structlog.get_logger("dronzer.cluster.scheduler")
 
+
 class GlobalScheduler:
     """
     Distributed Job Scheduler handling asynchronous tasks (Workflows, AI Agents, Batch Processing)
-    across multiple cloud regions. Features Priority Scheduling and Automatic Task Migration 
+    across multiple cloud regions. Features Priority Scheduling and Automatic Task Migration
     if a worker node dies.
     """
 
-    def __init__(self, router: GlobalRouter, lock_manager: DistributedLockManager, redis_client: Any = None):
+    def __init__(
+        self, router: GlobalRouter, lock_manager: DistributedLockManager, redis_client: Any = None
+    ):
         self.router = router
         self.lock_manager = lock_manager
         self.redis = redis_client
@@ -28,7 +31,9 @@ class GlobalScheduler:
         logger.info(f"Enqueueing global job {job_id}", queue=queue_name, priority=priority)
 
         # 1. Determine optimal cluster region via Router
-        target_node = await self.router.route_request({"requires_gpu": payload.get("needs_gpu", False)})
+        target_node = await self.router.route_request(
+            {"requires_gpu": payload.get("needs_gpu", False)}
+        )
 
         # 2. Push to Redis queue specific to that node/region
         # e.g., await self.redis.zadd(f"queue:{target_node}", {job_id: priority})
@@ -50,7 +55,7 @@ class GlobalScheduler:
     async def _task_migration_watcher(self):
         """
         Runs ONLY on the Cluster Leader.
-        Monitors the Service Registry for Dead nodes. If a node dies, 
+        Monitors the Service Registry for Dead nodes. If a node dies,
         it migrates all jobs in that node's queue to a healthy node.
         """
         # This prevents dropped jobs during a sudden Node Failure (OOM Kill, Spot Instance termination)

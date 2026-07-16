@@ -6,16 +6,18 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.agents.tools")
 
+
 class ToolDefinition(BaseModel):
     name: str
     description: str
     parameters_schema: dict[str, Any]
-    is_remote: bool = False # If true, delegates execution to an MCP Server
+    is_remote: bool = False  # If true, delegates execution to an MCP Server
+
 
 class ToolRegistry:
     """
     Central repository of Tools available for Agents.
-    Integrates with the Model Context Protocol (MCP) to allow agents to securely 
+    Integrates with the Model Context Protocol (MCP) to allow agents to securely
     interact with external local or remote environments.
     """
 

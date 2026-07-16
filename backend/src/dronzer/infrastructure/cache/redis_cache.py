@@ -15,6 +15,7 @@ class RedisCache(ICache):
     Distributed cache implementation using Redis.
     Required for multi-worker hot reloads and health sync.
     """
+
     def __init__(self) -> None:
         self.client = redis.from_url(settings.REDIS_URL, decode_responses=True)
         logger.info("Redis cache initialized.")

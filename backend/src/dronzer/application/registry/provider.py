@@ -1,9 +1,9 @@
-
 import structlog
 
 from dronzer.domain.sdk.provider import IProvider
 
 logger = structlog.get_logger("dronzer.registry.provider")
+
 
 class ProviderRegistry:
     """

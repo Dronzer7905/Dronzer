@@ -7,6 +7,7 @@ from dronzer.infrastructure.database.models.agents.core import AgentState
 
 logger = structlog.get_logger("dronzer.agents.collaboration")
 
+
 class AgentCoordinator:
     """
     Acts as a Supervisor/Coordinator in a Multi-Agent system (similar to LangGraph Supervisor pattern).
@@ -17,7 +18,9 @@ class AgentCoordinator:
         self.supervisor = supervisor_executor
         self.sub_agents = sub_agents
 
-    async def orchestrate(self, overarching_task: str, global_state: dict[str, Any]) -> dict[str, Any]:
+    async def orchestrate(
+        self, overarching_task: str, global_state: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Coordinates the execution of multiple agents to achieve a single goal.
         """
@@ -36,7 +39,7 @@ class AgentCoordinator:
         # Mocking the parsed delegation plan for demonstration
         parsed_plan = [
             {"agent": "researcher_agent", "task": "Find market data"},
-            {"agent": "writer_agent", "task": "Write the summary"}
+            {"agent": "writer_agent", "task": "Write the summary"},
         ]
 
         # 2. Execute sub-tasks sequentially (or concurrently depending on DAG)
@@ -52,7 +55,9 @@ class AgentCoordinator:
             logger.info(f"Delegating task to {target_agent_name}", task=sub_task)
 
             # Sub-agent execution
-            sub_state = AgentState(scratchpad=[{"role": "system", "content": "Shared Context: " + str(results)}])
+            sub_state = AgentState(
+                scratchpad=[{"role": "system", "content": "Shared Context: " + str(results)}]
+            )
             sub_result = await executor.run(sub_task, sub_state)
 
             results[target_agent_name] = sub_result

@@ -6,16 +6,19 @@ from dronzer.domain.knowledge.parsers import ParsedDocument
 
 logger = structlog.get_logger("dronzer.knowledge.chunking")
 
+
 class DocumentChunk:
     def __init__(self, text: str, chunk_index: int):
         self.text = text
         self.chunk_index = chunk_index
 
+
 class ChunkingEngine:
     """
-    Splits long parsed documents into smaller, semantically meaningful chunks 
+    Splits long parsed documents into smaller, semantically meaningful chunks
     so they can be embedded and retrieved accurately by the Vector Store.
     """
+
     def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
@@ -46,7 +49,7 @@ class ChunkingEngine:
             if current_length + len(word) + 1 > self.chunk_size and current_chunk:
                 chunks.append(" ".join(current_chunk))
                 # Handle overlap
-                overlap_words = current_chunk[-max(1, self.chunk_overlap // 5):]
+                overlap_words = current_chunk[-max(1, self.chunk_overlap // 5) :]
                 current_chunk = overlap_words
                 current_length = sum(len(w) for w in current_chunk) + len(current_chunk)
 
@@ -71,7 +74,8 @@ class ChunkingEngine:
 
         for section in sections:
             section = section.strip()
-            if not section: continue
+            if not section:
+                continue
 
             if len(section) > self.chunk_size:
                 sub_chunks = self._recursive_character_split(section)

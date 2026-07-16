@@ -11,6 +11,7 @@ class PluginMetadata(BaseModel):
     author: str
     dependencies: list[str] = []
 
+
 class IPlugin(ABC):
     """
     Abstract Base Class for all Gateway Plugins.

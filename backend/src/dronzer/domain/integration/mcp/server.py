@@ -6,20 +6,23 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.integration.mcp.server")
 
+
 class MCPTool(BaseModel):
     name: str
     description: str
     inputSchema: dict[str, Any]
+
 
 class MCPResource(BaseModel):
     uri: str
     name: str
     mimeType: str
 
+
 class MCPServer:
     """
     Implementation of the Model Context Protocol (MCP) Server.
-    Allows external AI clients (like Claude Desktop) to connect to Dronzer 
+    Allows external AI clients (like Claude Desktop) to connect to Dronzer
     and leverage its registered tools, prompts, and resources.
     Supports JSON-RPC over both stdio and SSE (Server-Sent Events).
     """
@@ -51,15 +54,8 @@ class MCPServer:
         if method == "initialize":
             return {
                 "protocolVersion": "2024-11-05",
-                "capabilities": {
-                    "prompts": {},
-                    "resources": {},
-                    "tools": {}
-                },
-                "serverInfo": {
-                    "name": self.name,
-                    "version": self.version
-                }
+                "capabilities": {"prompts": {}, "resources": {}, "tools": {}},
+                "serverInfo": {"name": self.name, "version": self.version},
             }
 
         elif method == "tools/list":
@@ -89,7 +85,11 @@ class MCPServer:
                 raise ValueError(f"Unknown resource URI: {uri}")
 
             content = await handler()
-            return {"contents": [{"uri": uri, "mimeType": self._resources[uri].mimeType, "text": content}]}
+            return {
+                "contents": [
+                    {"uri": uri, "mimeType": self._resources[uri].mimeType, "text": content}
+                ]
+            }
 
         else:
             raise ValueError(f"Unsupported MCP RPC method: {method}")

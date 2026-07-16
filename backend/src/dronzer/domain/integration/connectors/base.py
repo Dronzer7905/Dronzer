@@ -9,9 +9,10 @@ class ConnectorAction(BaseModel):
     description: str
     parameters_schema: dict[str, Any]
 
+
 class BaseConnector(ABC):
     """
-    Abstract interface for integrating external 3rd party services 
+    Abstract interface for integrating external 3rd party services
     (GitHub, Jira, Salesforce, PostgreSQL) into Dronzer.
     """
 
@@ -26,6 +27,8 @@ class BaseConnector(ABC):
         pass
 
     @abstractmethod
-    async def execute_action(self, action_name: str, params: dict[str, Any], credentials: dict[str, str]) -> Any:
+    async def execute_action(
+        self, action_name: str, params: dict[str, Any], credentials: dict[str, str]
+    ) -> Any:
         """Executes a specific action against the remote service."""
         pass

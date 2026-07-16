@@ -4,10 +4,11 @@ import structlog
 
 logger = structlog.get_logger("dronzer.cluster.recovery")
 
+
 class DisasterRecoveryEngine:
     """
     Manages automated snapshotting and cross-region backups.
-    Handles the restoration of PostgreSQL databases and Qdrant Vector stores 
+    Handles the restoration of PostgreSQL databases and Qdrant Vector stores
     in the event of catastrophic data corruption or unrecoverable cluster loss.
     """
 

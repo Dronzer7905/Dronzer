@@ -3,9 +3,10 @@ from enum import Enum
 
 
 class CircuitState(Enum):
-    CLOSED = "CLOSED"     # Normal operation, requests pass
-    OPEN = "OPEN"         # Failing, requests blocked
-    HALF_OPEN = "HALF_OPEN" # Testing recovery, partial requests pass
+    CLOSED = "CLOSED"  # Normal operation, requests pass
+    OPEN = "OPEN"  # Failing, requests blocked
+    HALF_OPEN = "HALF_OPEN"  # Testing recovery, partial requests pass
+
 
 class CircuitBreaker:
     """

@@ -6,6 +6,7 @@ from jinja2.exceptions import TemplateSyntaxError, UndefinedError
 
 logger = structlog.get_logger("dronzer.llmops.compiler")
 
+
 class PromptCompiler:
     """
     Renders dynamic Prompt Templates using Jinja2 semantics.

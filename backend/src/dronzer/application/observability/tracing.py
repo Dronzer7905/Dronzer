@@ -20,10 +20,9 @@ class OpenTelemetryTracer:
 
     def setup(self):
         """Initializes the OpenTelemetry TracerProvider."""
-        resource = Resource.create({
-            SERVICE_NAME: self.service_name,
-            "environment": os.getenv("ENVIRONMENT", "production")
-        })
+        resource = Resource.create(
+            {SERVICE_NAME: self.service_name, "environment": os.getenv("ENVIRONMENT", "production")}
+        )
 
         self.provider = TracerProvider(resource=resource)
 
@@ -42,11 +41,14 @@ class OpenTelemetryTracer:
             self.setup()
         return self.tracer
 
+
 # Global singleton
 tracing = OpenTelemetryTracer()
 
+
 def trace_function(name: str):
     """Decorator to easily trace any function call in the gateway."""
+
     def decorator(func):
         async def async_wrapper(*args, **kwargs):
             tracer = tracing.get_tracer()
@@ -69,7 +71,9 @@ def trace_function(name: str):
                     raise
 
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
+
     return decorator

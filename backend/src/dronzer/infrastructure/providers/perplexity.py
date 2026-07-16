@@ -9,6 +9,7 @@ from dronzer.domain.sdk.provider import DiscoveredModel, IProvider, ProviderCapa
 
 logger = structlog.get_logger("dronzer.providers.perplexity")
 
+
 class PerplexityProvider(IProvider):
     """
     Perplexity AI API integration (OpenAI compatible).
@@ -23,7 +24,7 @@ class PerplexityProvider(IProvider):
             images=False,
             streaming=True,
             json_mode=False,
-            tool_calling=False
+            tool_calling=False,
         )
 
     @property
@@ -33,7 +34,9 @@ class PerplexityProvider(IProvider):
     async def get_capabilities(self) -> ProviderCapabilities:
         return self._capabilities
 
-    async def discover_models(self, api_key: str, base_url: str | None = None) -> list[DiscoveredModel]:
+    async def discover_models(
+        self, api_key: str, base_url: str | None = None
+    ) -> list[DiscoveredModel]:
         # Perplexity does not have a public /models endpoint at the time of writing.
         static_models = [
             ("llama-3-sonar-small-32k-chat", 32768),
@@ -43,16 +46,20 @@ class PerplexityProvider(IProvider):
         ]
 
         return [
-            DiscoveredModel(id=m[0], name=m[0], context_window=m[1], capabilities=self._capabilities)
+            DiscoveredModel(
+                id=m[0], name=m[0], context_window=m[1], capabilities=self._capabilities
+            )
             for m in static_models
         ]
 
-    async def generate_chat(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> dict[str, Any]:
+    async def generate_chat(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> dict[str, Any]:
         url = f"{base_url or self.default_base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "accept": "application/json"
+            "accept": "application/json",
         }
 
         async with httpx.AsyncClient() as client:
@@ -60,17 +67,21 @@ class PerplexityProvider(IProvider):
             response.raise_for_status()
             return response.json()
 
-    async def generate_stream(self, payload: dict[str, Any], api_key: str, base_url: str | None = None) -> AsyncGenerator[dict[str, Any]]:
+    async def generate_stream(
+        self, payload: dict[str, Any], api_key: str, base_url: str | None = None
+    ) -> AsyncGenerator[dict[str, Any]]:
         url = f"{base_url or self.default_base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "accept": "application/json"
+            "accept": "application/json",
         }
         payload["stream"] = True
 
         async with httpx.AsyncClient() as client:
-            async with client.stream("POST", url, headers=headers, json=payload, timeout=60.0) as response:
+            async with client.stream(
+                "POST", url, headers=headers, json=payload, timeout=60.0
+            ) as response:
                 response.raise_for_status()
                 async for line in response.aiter_lines():
                     if line.startswith("data: ") and line != "data: [DONE]":
@@ -79,7 +90,11 @@ class PerplexityProvider(IProvider):
     async def check_health(self, api_key: str, base_url: str | None = None) -> bool:
         # A simple dummy prompt to test auth since there is no models endpoint
         try:
-            payload = {"model": "llama-3-sonar-small-32k-chat", "max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]}
+            payload = {
+                "model": "llama-3-sonar-small-32k-chat",
+                "max_tokens": 1,
+                "messages": [{"role": "user", "content": "hi"}],
+            }
             await self.generate_chat(payload, api_key, base_url)
             return True
         except Exception:

@@ -5,10 +5,11 @@ import structlog
 
 logger = structlog.get_logger("dronzer.cluster.consensus")
 
+
 class DistributedLockManager:
     """
     Provides cross-node distributed locks (Redlock algorithm equivalent).
-    Ensures that cron-jobs or database migrations only run on a single node 
+    Ensures that cron-jobs or database migrations only run on a single node
     across the entire global cluster.
     """
 
@@ -21,7 +22,7 @@ class DistributedLockManager:
         """
         logger.debug(f"Attempting to acquire distributed lock: {lock_name}")
         if not self.redis:
-            return True # Mock for local dev
+            return True  # Mock for local dev
 
         # Implementation would use SET NX PX
         # e.g., await self.redis.set(lock_name, "locked", nx=True, px=lease_ttl_ms)
@@ -62,7 +63,9 @@ class LeaderElection:
                 acquired = await self.lock_manager.acquire_lock(lock_name, self.lease_duration_ms)
 
                 if acquired and not self.is_leader:
-                    logger.warning(f"Node {self.node_id} ACQUIRED LEADER STATUS for {cluster_name}!")
+                    logger.warning(
+                        f"Node {self.node_id} ACQUIRED LEADER STATUS for {cluster_name}!"
+                    )
                     self.is_leader = True
                     # Trigger Leader specific startup hooks (e.g. start global scheduler)
 

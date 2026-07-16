@@ -10,12 +10,19 @@ from dronzer.domain.sdk.extension import ExtensionBase
 
 logger = structlog.get_logger("dronzer.extensions.loader")
 
+
 class ExtensionLoader:
     """
     Dynamically loads Python modules from the filesystem into the Extension Registry.
     Supports unpacking single Python files or full packages containing an `entrypoint.py`.
     """
-    def __init__(self, registry: ExtensionRegistry, sandbox: SandboxManager, extensions_dir: str = "/opt/dronzer/extensions"):
+
+    def __init__(
+        self,
+        registry: ExtensionRegistry,
+        sandbox: SandboxManager,
+        extensions_dir: str = "/opt/dronzer/extensions",
+    ):
         self.registry = registry
         self.sandbox = sandbox
         self.extensions_dir = Path(extensions_dir)
@@ -23,7 +30,9 @@ class ExtensionLoader:
     def load_all(self):
         """Scans the extensions directory and loads discovered plugins."""
         if not self.extensions_dir.exists():
-            logger.info("Extensions directory does not exist. Skipping.", path=str(self.extensions_dir))
+            logger.info(
+                "Extensions directory does not exist. Skipping.", path=str(self.extensions_dir)
+            )
             return
 
         for item in self.extensions_dir.iterdir():
@@ -52,7 +61,11 @@ class ExtensionLoader:
             # 2. Find the ExtensionBase subclass
             for attr_name in dir(module):
                 attr = getattr(module, attr_name)
-                if isinstance(attr, type) and issubclass(attr, ExtensionBase) and attr is not ExtensionBase:
+                if (
+                    isinstance(attr, type)
+                    and issubclass(attr, ExtensionBase)
+                    and attr is not ExtensionBase
+                ):
                     # 3. Instantiate and register
                     logger.info("Found valid Extension Class", class_name=attr_name)
 
@@ -66,7 +79,9 @@ class ExtensionLoader:
                         self.registry.register(ext_instance)
                         return True
                     else:
-                        logger.warning("Extension missing `manifest` variable in module", module=module_name)
+                        logger.warning(
+                            "Extension missing `manifest` variable in module", module=module_name
+                        )
 
             logger.warning("No ExtensionBase subclass found in module", module=module_name)
             return False

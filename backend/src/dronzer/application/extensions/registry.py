@@ -1,15 +1,16 @@
-
 import structlog
 
 from dronzer.domain.sdk.extension import ExtensionBase
 
 logger = structlog.get_logger("dronzer.extensions.registry")
 
+
 class ExtensionRegistry:
     """
     Central repository tracking all loaded and active extensions.
     Manages dependency resolution and semantic versioning constraints.
     """
+
     def __init__(self):
         # extension_id -> ExtensionBase instance
         self._extensions: dict[str, ExtensionBase] = {}
@@ -63,7 +64,7 @@ class ExtensionRegistry:
                 "id": ext.manifest.id,
                 "name": ext.manifest.name,
                 "version": ext.manifest.version,
-                "active": self.is_active(ext.manifest.id)
+                "active": self.is_active(ext.manifest.id),
             }
             for ext in self._extensions.values()
         ]

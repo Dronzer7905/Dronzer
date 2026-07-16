@@ -13,14 +13,18 @@ from dronzer.presentation.schemas.admin import ProviderConfigResponse
 logger = structlog.get_logger("dronzer.api.admin.providers")
 router = APIRouter(prefix="/providers", tags=["Admin Providers"])
 
+
 class ProviderCreate(BaseModel):
     name: str
     priority: int = 100
     weight: float = 1.0
     models: list[str] = []
 
+
 @router.post("", response_model=ProviderConfigResponse)
-async def create_provider(data: ProviderCreate, request: Request, session: AsyncSession = Depends(get_db_session)):
+async def create_provider(
+    data: ProviderCreate, request: Request, session: AsyncSession = Depends(get_db_session)
+):
     """
     Dynamically registers a new provider in the Gateway DB and memory registry.
     """
@@ -33,22 +37,16 @@ async def create_provider(data: ProviderCreate, request: Request, session: Async
 
     # Save to DB
     db_prov = Provider(
-        name=data.name.lower(),
-        base_url=f"https://api.{data.name.lower()}.com",
-        is_active=True
+        name=data.name.lower(), base_url=f"https://api.{data.name.lower()}.com", is_active=True
     )
     session.add(db_prov)
     await session.flush()
-    
+
     # Save models
     for m_name in data.models:
-        db_model = Model(
-            name=m_name,
-            provider_id=db_prov.id,
-            is_active=True
-        )
+        db_model = Model(name=m_name, provider_id=db_prov.id, is_active=True)
         session.add(db_model)
-        
+
     await session.commit()
     await session.refresh(db_prov)
 
@@ -60,17 +58,18 @@ async def create_provider(data: ProviderCreate, request: Request, session: Async
             registry.register(real_provider)
         except ValueError:
             pass  # No SDK available for this provider name — DB-only registration
-    
+
     logger.info("New provider created via admin API", provider_name=data.name)
-    
+
     return ProviderConfigResponse(
         id=str(db_prov.id),
         name=db_prov.name.capitalize(),
         is_enabled=db_prov.is_active,
         priority=data.priority,
         weight=data.weight,
-        models=data.models
+        models=data.models,
     )
+
 
 @router.get("", response_model=list[ProviderConfigResponse])
 async def list_providers(request: Request, session: AsyncSession = Depends(get_db_session)):
@@ -85,20 +84,25 @@ async def list_providers(request: Request, session: AsyncSession = Depends(get_d
         # Load models
         models_result = await session.execute(select(Model).where(Model.provider_id == p.id))
         models = [m.name for m in models_result.scalars().all()]
-        
-        response.append(ProviderConfigResponse(
-            id=str(p.id),
-            name=p.name.capitalize(),
-            is_enabled=p.is_active,
-            priority=100,
-            weight=100,
-            models=models,
-        ))
+
+        response.append(
+            ProviderConfigResponse(
+                id=str(p.id),
+                name=p.name.capitalize(),
+                is_enabled=p.is_active,
+                priority=100,
+                weight=100,
+                models=models,
+            )
+        )
 
     return response
 
+
 @router.post("/{provider_id}/disable")
-async def disable_provider(provider_id: str, request: Request, session: AsyncSession = Depends(get_db_session)):
+async def disable_provider(
+    provider_id: str, request: Request, session: AsyncSession = Depends(get_db_session)
+):
     """
     Dynamically disables a provider globally across all tenants.
     """
@@ -115,14 +119,17 @@ async def disable_provider(provider_id: str, request: Request, session: AsyncSes
         p = result.scalars().first()
     if not p:
         raise HTTPException(status_code=404, detail="Provider not found in DB")
-        
+
     p.is_active = False
     await session.commit()
     logger.warning("Provider disabled by admin", provider_id=provider_id)
     return {"status": "disabled", "provider_id": provider_id}
 
+
 @router.post("/{provider_id}/enable")
-async def enable_provider(provider_id: str, request: Request, session: AsyncSession = Depends(get_db_session)):
+async def enable_provider(
+    provider_id: str, request: Request, session: AsyncSession = Depends(get_db_session)
+):
     """
     Re-enables a provider globally.
     """
@@ -139,7 +146,7 @@ async def enable_provider(provider_id: str, request: Request, session: AsyncSess
         p = result.scalars().first()
     if not p:
         raise HTTPException(status_code=404, detail="Provider not found in DB")
-        
+
     p.is_active = True
     await session.commit()
     logger.info("Provider enabled by admin", provider_id=provider_id)

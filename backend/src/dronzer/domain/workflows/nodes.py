@@ -5,10 +5,12 @@ import structlog
 
 logger = structlog.get_logger("dronzer.workflows.nodes")
 
+
 class BaseNodeExecutor(ABC):
     """
     Abstract interface for all Workflow Nodes.
     """
+
     @abstractmethod
     async def run(self, parameters: dict[str, Any], global_state: dict[str, Any]) -> dict[str, Any]:
         """
@@ -18,17 +20,19 @@ class BaseNodeExecutor(ABC):
         """
         pass
 
+
 class LLMNodeExecutor(BaseNodeExecutor):
     """
     Executes a standard LLM generation call.
     """
+
     async def run(self, parameters: dict[str, Any], global_state: dict[str, Any]) -> dict[str, Any]:
         prompt_template = parameters.get("prompt", "")
         model = parameters.get("model", "gpt-4-turbo")
 
         # Hydrate template with global state variables
         # (e.g. replacing {{user_input}} with global_state["user_input"])
-        hydrated_prompt = prompt_template # ... Template hydration logic
+        hydrated_prompt = prompt_template  # ... Template hydration logic
 
         logger.info("Executing LLM Node", model=model)
 
@@ -37,10 +41,12 @@ class LLMNodeExecutor(BaseNodeExecutor):
 
         return {"llm_output": mock_response}
 
+
 class HTTPRequestNodeExecutor(BaseNodeExecutor):
     """
     Executes a REST/HTTP request (e.g., to a webhook or external 3rd party API).
     """
+
     async def run(self, parameters: dict[str, Any], global_state: dict[str, Any]) -> dict[str, Any]:
         url = parameters.get("url")
         method = parameters.get("method", "GET")
@@ -49,11 +55,13 @@ class HTTPRequestNodeExecutor(BaseNodeExecutor):
         # return await httpx.AsyncClient().request(method, url)
         return {"status_code": 200, "response_body": {"success": True}}
 
+
 class PythonScriptNodeExecutor(BaseNodeExecutor):
     """
     Executes custom python logic securely.
     Leverages the previously discussed `sys.addaudithook` for best-effort sandboxing.
     """
+
     async def run(self, parameters: dict[str, Any], global_state: dict[str, Any]) -> dict[str, Any]:
         script = parameters.get("code", "")
 

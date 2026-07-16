@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.marketplace.discovery")
 
+
 class DiscoveryEngine:
     """
     Handles Marketplace search, recommendation algorithms, and popularity ranking.
@@ -29,7 +30,7 @@ class DiscoveryEngine:
                 "is_verified": True,
                 "rating": 4.9,
                 "downloads": 125000,
-                "description": "Headless browser automation connector."
+                "description": "Headless browser automation connector.",
             },
             {
                 "name": "@community/llama3-prompts",
@@ -37,11 +38,13 @@ class DiscoveryEngine:
                 "is_verified": False,
                 "rating": 4.5,
                 "downloads": 15000,
-                "description": "Curated system prompts for Llama-3 70B."
-            }
+                "description": "Curated system prompts for Llama-3 70B.",
+            },
         ]
 
-    async def search_packages(self, query: str, filters: dict[str, Any] = None) -> list[dict[str, Any]]:
+    async def search_packages(
+        self, query: str, filters: dict[str, Any] = None
+    ) -> list[dict[str, Any]]:
         """
         Full-text search across the Marketplace Registry.
         Supports filtering by Category, License Type, and Price.

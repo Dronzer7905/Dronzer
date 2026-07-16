@@ -7,17 +7,18 @@ from dronzer.infrastructure.cluster.router import GlobalRouter
 
 logger = structlog.get_logger("dronzer.cluster.failover")
 
+
 class FailoverController:
     """
     Monitors inter-cluster health and automates Active-Passive or Active-Active failovers.
-    If the Primary cluster goes offline (e.g. AWS us-east-1 outage), this controller 
+    If the Primary cluster goes offline (e.g. AWS us-east-1 outage), this controller
     automatically promotes a Secondary Replica to Primary.
     """
 
     def __init__(self, global_router: GlobalRouter, db_session: Any = None):
         self.router = global_router
         self.db = db_session
-        self.health_threshold_ms = 30000 # 30 seconds without inter-cluster heartbeat = DOWN
+        self.health_threshold_ms = 30000  # 30 seconds without inter-cluster heartbeat = DOWN
 
     async def monitor_clusters(self):
         """
@@ -37,7 +38,9 @@ class FailoverController:
         """
         Promotes a replica cluster to take over Primary responsibilities.
         """
-        logger.critical(f"FAILOVER INITIATED: Promoting {promote_cluster_id} to PRIMARY. Marking {dead_cluster_id} OFFLINE.")
+        logger.critical(
+            f"FAILOVER INITIATED: Promoting {promote_cluster_id} to PRIMARY. Marking {dead_cluster_id} OFFLINE."
+        )
 
         # 1. Update Database ClusterTopology records (Role switch)
         # 2. Reconfigure Global Router to drop traffic to `dead_cluster_id`

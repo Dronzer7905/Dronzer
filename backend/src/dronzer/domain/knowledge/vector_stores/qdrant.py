@@ -10,12 +10,14 @@ from dronzer.domain.knowledge.vector_stores.base import (
 
 logger = structlog.get_logger("dronzer.knowledge.qdrant")
 
+
 class QdrantProvider(VectorStoreProvider):
     """
     Qdrant Vector Database implementation.
     Supports in-memory, local disk, or remote cluster connections.
     Excellent choice for the default Dronzer RAG fallback.
     """
+
     def __init__(self, host: str = "localhost", port: int = 6333, in_memory: bool = False):
         self.host = host
         self.port = port
@@ -41,7 +43,13 @@ class QdrantProvider(VectorStoreProvider):
         # await self.client.upsert(collection_name=collection_name, points=points)
         return True
 
-    async def search(self, collection_name: str, query_vector: list[float], top_k: int = 5, filters: dict[str, Any] | None = None) -> list[SearchResult]:
+    async def search(
+        self,
+        collection_name: str,
+        query_vector: list[float],
+        top_k: int = 5,
+        filters: dict[str, Any] | None = None,
+    ) -> list[SearchResult]:
         logger.debug(f"Searching Qdrant collection {collection_name}")
 
         # Simulated response for now
@@ -49,7 +57,7 @@ class QdrantProvider(VectorStoreProvider):
             SearchResult(
                 id="chunk-1234",
                 score=0.92,
-                payload={"text": "This is a highly relevant document chunk.", "doc_id": "doc_567"}
+                payload={"text": "This is a highly relevant document chunk.", "doc_id": "doc_567"},
             )
         ]
 

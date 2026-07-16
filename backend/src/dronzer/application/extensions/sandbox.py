@@ -5,16 +5,19 @@ import structlog
 
 logger = structlog.get_logger("dronzer.extensions.sandbox")
 
+
 class ExtensionSandboxException(Exception):
     """Raised when an extension attempts an unauthorized operation."""
+
     pass
+
 
 class SandboxManager:
     """
     Enforces security capabilities (network, filesystem) for running extensions.
     Uses Python's sys.addaudithook to intercept low-level OS calls.
-    
-    Warning: Thread-local sandboxing in Python is best-effort. 
+
+    Warning: Thread-local sandboxing in Python is best-effort.
     It intercepts calls based on the current thread context.
     """
 
@@ -68,7 +71,9 @@ class SandboxManager:
                 host = address[0] if isinstance(address, tuple) else str(address)
                 if host not in self._allowed_hosts:
                     logger.warning("Sandbox blocked unauthorized network access", host=host)
-                    raise ExtensionSandboxException(f"Extension not authorized for network access to {host}")
+                    raise ExtensionSandboxException(
+                        f"Extension not authorized for network access to {host}"
+                    )
 
         # Filesystem Sandboxing (open, mkdir, remove, etc.)
         if event.startswith("open") or event.startswith("os."):

@@ -11,6 +11,7 @@ from dronzer.domain.knowledge.vector_stores.base import VectorRecord, VectorStor
 
 logger = structlog.get_logger("dronzer.knowledge.ingestion")
 
+
 class DocumentIngestionPipeline:
     """
     Orchestrates the conversion of a raw file into dense searchable vectors.
@@ -19,21 +20,25 @@ class DocumentIngestionPipeline:
     3. Mask sensitive PII
     4. Generate embeddings
     5. Upsert to Vector Database
-    
+
     This should be executed asynchronously by a Celery or Redis worker.
     """
 
-    def __init__(self,
-                 vector_store: VectorStoreProvider,
-                 embedding_provider: EmbeddingProvider,
-                 db_session: Any = None):
+    def __init__(
+        self,
+        vector_store: VectorStoreProvider,
+        embedding_provider: EmbeddingProvider,
+        db_session: Any = None,
+    ):
         self.vector_store = vector_store
         self.embedding_provider = embedding_provider
         self.db = db_session
         self.chunker = ChunkingEngine()
         self.redactor = PIIRedactor(mode="redact")
 
-    async def process_document(self, file_path: Path, collection_name: str, tenant_config: dict = None):
+    async def process_document(
+        self, file_path: Path, collection_name: str, tenant_config: dict = None
+    ):
         logger.info("Starting ingestion pipeline", file=str(file_path), collection=collection_name)
 
         try:
@@ -66,8 +71,8 @@ class DocumentIngestionPipeline:
                         payload={
                             "text": batch_texts[idx],
                             "source": str(file_path),
-                            "chunk_index": idx
-                        }
+                            "chunk_index": idx,
+                        },
                     )
                 )
 

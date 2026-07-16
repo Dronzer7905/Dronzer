@@ -14,7 +14,11 @@ class PluginLoader:
     Discovers, loads, and initializes external Python plugins dynamically.
     """
 
-    def __init__(self, provider_registry: ProviderRegistry, plugin_dir_module: str = "dronzer.infrastructure.plugins"):
+    def __init__(
+        self,
+        provider_registry: ProviderRegistry,
+        plugin_dir_module: str = "dronzer.infrastructure.plugins",
+    ):
         self.provider_registry = provider_registry
         self.plugin_dir_module = plugin_dir_module
         self._loaded_plugins: dict[str, IPlugin] = {}
@@ -44,7 +48,11 @@ class PluginLoader:
                     self.provider_registry.register(provider)
 
                 self._loaded_plugins[plugin.metadata.name] = plugin
-                logger.info("Plugin loaded successfully", plugin=plugin.metadata.name, version=plugin.metadata.version)
+                logger.info(
+                    "Plugin loaded successfully",
+                    plugin=plugin.metadata.name,
+                    version=plugin.metadata.version,
+                )
             else:
                 logger.debug("Module has no register_plugin hook", module=module_name)
         except Exception as e:

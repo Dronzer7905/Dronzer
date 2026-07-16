@@ -56,7 +56,9 @@ def configure_logging() -> None:
         foreign_pre_chain=shared_processors,
         processors=[
             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-            structlog.processors.JSONRenderer() if settings.LOG_FORMAT == "JSON" else structlog.dev.ConsoleRenderer(colors=True)
+            structlog.processors.JSONRenderer()
+            if settings.LOG_FORMAT == "JSON"
+            else structlog.dev.ConsoleRenderer(colors=True),
         ],
     )
     handler.setFormatter(formatter)

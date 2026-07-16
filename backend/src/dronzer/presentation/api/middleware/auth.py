@@ -7,6 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 logger = structlog.get_logger("dronzer.api.auth")
 
+
 class AuthenticationMiddleware(BaseHTTPMiddleware):
     """
     Validates API keys, Bearer tokens, and handles rate limiting basics.
@@ -28,9 +29,9 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                         "message": "You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY).",
                         "type": "invalid_request_error",
                         "param": None,
-                        "code": "missing_api_key"
+                        "code": "missing_api_key",
                     }
-                }
+                },
             )
 
         token = auth_header.replace("Bearer ", "").strip()
@@ -40,18 +41,18 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         from sqlalchemy import select
         from dronzer.infrastructure.database.core import async_session_factory
         from dronzer.infrastructure.database.models.gateway import GatewayKey
-        
+
         hashed = hashlib.sha256(token.encode()).hexdigest()
-        
+
         async with async_session_factory() as session:
             stmt = select(GatewayKey).where(
                 GatewayKey.hashed_key == hashed,
                 GatewayKey.is_active == True,
-                GatewayKey.is_deleted == False
+                GatewayKey.is_deleted == False,
             )
             result = await session.execute(stmt)
             db_key = result.scalars().first()
-            
+
             if not db_key:
                 logger.warning("Invalid API key provided", path=request.url.path)
                 return JSONResponse(
@@ -61,11 +62,11 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                             "message": "Incorrect API key provided.",
                             "type": "invalid_request_error",
                             "param": None,
-                            "code": "invalid_api_key"
+                            "code": "invalid_api_key",
                         }
-                    }
+                    },
                 )
-                
+
             # Attach organization and project context to the request
             request.state.api_key = token
             request.state.gateway_key_id = db_key.id

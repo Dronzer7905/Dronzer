@@ -6,10 +6,12 @@ import structlog
 
 logger = structlog.get_logger("dronzer.events.hooks")
 
+
 class HookPoint(str, Enum):
     """
     Standard lifecycle points where extensions can inject logic.
     """
+
     BEFORE_STARTUP = "before_startup"
     AFTER_STARTUP = "after_startup"
     BEFORE_SHUTDOWN = "before_shutdown"
@@ -20,11 +22,13 @@ class HookPoint(str, Enum):
     BEFORE_PROVIDER = "before_provider"
     AFTER_PROVIDER = "after_provider"
 
+
 class HookManager:
     """
     Manages synchronous and asynchronous lifecycle hooks for extensions.
     Unlike the Event Bus, Hooks are executed sequentially and can mutate the payload.
     """
+
     def __init__(self):
         self._hooks: dict[HookPoint, list[Callable]] = {point: [] for point in HookPoint}
 

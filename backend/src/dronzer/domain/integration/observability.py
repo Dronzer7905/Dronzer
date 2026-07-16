@@ -6,6 +6,7 @@ import structlog
 
 logger = structlog.get_logger("dronzer.integration.observability")
 
+
 class ToolExecutionObserver:
     """
     Middleware that tracks the performance, latency, and failure rates of all Tools.
@@ -34,7 +35,9 @@ class ToolExecutionObserver:
             duration_ms = (time.perf_counter() - start_time) * 1000
             self._record_metric(tool_name, tenant_id, duration_ms, status, error_msg)
 
-    def _record_metric(self, tool_name: str, tenant_id: str, duration_ms: float, status: str, error: str):
+    def _record_metric(
+        self, tool_name: str, tenant_id: str, duration_ms: float, status: str, error: str
+    ):
         """
         Ships the metric to the telemetry backend.
         """
@@ -43,7 +46,7 @@ class ToolExecutionObserver:
             tool=tool_name,
             tenant_id=tenant_id,
             duration_ms=round(duration_ms, 2),
-            status=status
+            status=status,
         )
 
         if self.metrics:

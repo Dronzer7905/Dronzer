@@ -5,17 +5,20 @@ import structlog
 
 logger = structlog.get_logger("dronzer.llmops.compare")
 
+
 class ModelComparisonEngine:
     """
     Executes a specific Prompt concurrently across multiple Foundation Models.
-    Used by Prompt Engineers in the UI to visually inspect side-by-side differences 
+    Used by Prompt Engineers in the UI to visually inspect side-by-side differences
     in output quality, tone, and formatting.
     """
 
     def __init__(self, ai_gateway: Any = None):
         self.gateway = ai_gateway
 
-    async def execute_side_by_side(self, prompt_text: str, variables: dict[str, Any], target_models: list[str]) -> dict[str, Any]:
+    async def execute_side_by_side(
+        self, prompt_text: str, variables: dict[str, Any], target_models: list[str]
+    ) -> dict[str, Any]:
         """
         Dispatches concurrent execution requests to the Gateway.
         """
@@ -27,12 +30,12 @@ class ModelComparisonEngine:
 
         async def _execute_model(model_name: str):
             # mock gateway execution
-            await asyncio.sleep(0.5) # simulate network latency
+            await asyncio.sleep(0.5)  # simulate network latency
             return {
                 "model": model_name,
                 "output": f"[{model_name}] Hello, here is my reasoning...",
                 "latency_ms": 500,
-                "cost_usd": 0.001
+                "cost_usd": 0.001,
             }
 
         # Execute all models concurrently

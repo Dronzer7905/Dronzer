@@ -4,9 +4,10 @@ from pydantic import BaseModel
 
 
 class RerankResult(BaseModel):
-    index: int # Index of the original document in the requested list
-    relevance_score: float # Scored typically from 0.0 to 1.0
-    text: str # The original text chunk
+    index: int  # Index of the original document in the requested list
+    relevance_score: float  # Scored typically from 0.0 to 1.0
+    text: str  # The original text chunk
+
 
 class RerankerProvider(ABC):
     """
@@ -18,7 +19,7 @@ class RerankerProvider(ABC):
     @abstractmethod
     async def rerank(self, query: str, documents: list[str], top_n: int = 5) -> list[RerankResult]:
         """
-        Takes a search query and a list of candidate documents, 
+        Takes a search query and a list of candidate documents,
         evaluating them simultaneously (cross-attention) to return a sorted, scored subset.
         """
         pass

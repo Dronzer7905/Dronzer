@@ -6,6 +6,7 @@ from redis.asyncio import Redis
 
 logger = logging.getLogger("dronzer.infrastructure.cache")
 
+
 class DistributedCache:
     """
     Enterprise caching layer supporting Redis distributed caching with TTLs,

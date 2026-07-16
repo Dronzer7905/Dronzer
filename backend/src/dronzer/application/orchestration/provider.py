@@ -1,4 +1,3 @@
-
 import structlog
 
 from sqlalchemy import select
@@ -16,9 +15,11 @@ class ProviderSelectionEngine:
     Queries the database directly via a per-request session.
     """
 
-    async def filter_providers(self, context: DecisionContext, session: AsyncSession) -> list[Provider]:
+    async def filter_providers(
+        self, context: DecisionContext, session: AsyncSession
+    ) -> list[Provider]:
         """
-        Retrieves all active providers and filters out unhealthy ones 
+        Retrieves all active providers and filters out unhealthy ones
         or those excluded by the tenant's RoutingPolicy.
         """
         logger.info("Filtering valid providers")
@@ -35,15 +36,12 @@ class ProviderSelectionEngine:
         allowed_providers_config = context.active_policy.get("allowed_providers")
 
         if allowed_providers_config:
-            active_providers = [
-                p for p in active_providers
-                if p.name in allowed_providers_config
-            ]
+            active_providers = [p for p in active_providers if p.name in allowed_providers_config]
             context.log_decision(
                 step="ProviderSelection",
                 action="FilterByPolicy",
                 reason="Tenant policy restricted providers",
-                metadata={"allowed": allowed_providers_config}
+                metadata={"allowed": allowed_providers_config},
             )
 
         # Return remaining valid providers (CircuitBreaker checks happen later)

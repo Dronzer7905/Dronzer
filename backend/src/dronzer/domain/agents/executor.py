@@ -7,6 +7,7 @@ from dronzer.infrastructure.database.models.agents.core import AgentProfile, Age
 
 logger = structlog.get_logger("dronzer.agents.executor")
 
+
 class AgentExecutor:
     """
     Executes a single Agent loop (ReAct pattern).
@@ -16,7 +17,9 @@ class AgentExecutor:
     4. Loops until LLM yields a final answer.
     """
 
-    def __init__(self, agent_profile: AgentProfile, tool_registry: ToolRegistry, llm_provider: Any = None):
+    def __init__(
+        self, agent_profile: AgentProfile, tool_registry: ToolRegistry, llm_provider: Any = None
+    ):
         self.profile = agent_profile
         self.tool_registry = tool_registry
         self.llm = llm_provider
@@ -60,9 +63,13 @@ class AgentExecutor:
                 try:
                     tool_result = await self.tool_registry.execute_tool(tool_name, tool_args)
                     # Append result to scratchpad for next iteration
-                    agent_state.scratchpad.append({"role": "tool", "name": tool_name, "content": str(tool_result)})
+                    agent_state.scratchpad.append(
+                        {"role": "tool", "name": tool_name, "content": str(tool_result)}
+                    )
                 except Exception as e:
-                    agent_state.scratchpad.append({"role": "tool", "name": tool_name, "error": str(e)})
+                    agent_state.scratchpad.append(
+                        {"role": "tool", "name": tool_name, "error": str(e)}
+                    )
 
         logger.warning(f"Agent {self.profile.name} hit max iterations ({self.max_iterations}).")
         return "Task failed: Agent hit maximum reasoning iterations."

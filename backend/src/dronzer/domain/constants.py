@@ -7,6 +7,7 @@ class Environment(str, Enum):
     PRODUCTION = "production"
     TESTING = "testing"
 
+
 # Gateway defaults
 DEFAULT_TIMEOUT_MS = 60000
 MAX_RETRIES = 3

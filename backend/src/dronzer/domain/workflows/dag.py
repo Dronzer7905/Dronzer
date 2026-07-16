@@ -5,19 +5,23 @@ from pydantic import BaseModel, Field
 
 logger = structlog.get_logger("dronzer.workflows.dag")
 
+
 class WorkflowEdge(BaseModel):
     source: str
     target: str
-    condition: str = None # Optional JS/Python expression for branching
+    condition: str = None  # Optional JS/Python expression for branching
+
 
 class WorkflowNode(BaseModel):
     id: str
-    type: str # 'llm', 'http', 'condition', 'human_approval', 'script'
+    type: str  # 'llm', 'http', 'condition', 'human_approval', 'script'
     parameters: dict[str, Any] = Field(default_factory=dict)
+
 
 class DAGDefinition(BaseModel):
     nodes: list[WorkflowNode]
     edges: list[WorkflowEdge]
+
 
 class DAGCompiler:
     """
@@ -59,7 +63,7 @@ class DAGCompiler:
                     if has_cycle(neighbor):
                         return True
                 elif neighbor in recursion_stack:
-                    return True # Cycle detected
+                    return True  # Cycle detected
 
             recursion_stack.remove(node_id)
             return False
@@ -68,7 +72,9 @@ class DAGCompiler:
             if node.id not in visited:
                 if has_cycle(node.id):
                     logger.error("Invalid workflow: Cycle detected in DAG.", node_id=node.id)
-                    raise ValueError(f"Workflow contains an invalid cycle involving node {node.id}. Use Loop nodes for intentional iteration.")
+                    raise ValueError(
+                        f"Workflow contains an invalid cycle involving node {node.id}. Use Loop nodes for intentional iteration."
+                    )
 
         return True
 

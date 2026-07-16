@@ -8,11 +8,13 @@ import structlog
 
 logger = structlog.get_logger("dronzer.events.bus")
 
+
 class AsyncEventBus:
     """
     In-memory Pub/Sub Event Bus for extension communication.
     Supports asynchronous event emission and subscription.
     """
+
     def __init__(self):
         # Maps event topics to a list of async callbacks
         self._subscribers: dict[str, list[Callable[[dict[str, Any]], Awaitable[None]]]] = {}
@@ -41,7 +43,7 @@ class AsyncEventBus:
             "id": str(uuid.uuid4()),
             "topic": topic,
             "timestamp": datetime.now(UTC).isoformat(),
-            "payload": payload
+            "payload": payload,
         }
 
         callbacks = self._subscribers[topic]
@@ -55,4 +57,6 @@ class AsyncEventBus:
         try:
             await callback(event)
         except Exception as e:
-            logger.error(f"Event subscriber failed for topic {topic}", error=str(e), event_id=event["id"])
+            logger.error(
+                f"Event subscriber failed for topic {topic}", error=str(e), event_id=event["id"]
+            )

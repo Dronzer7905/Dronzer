@@ -5,28 +5,41 @@ from pydantic import BaseModel
 
 logger = structlog.get_logger("dronzer.enterprise.billing")
 
+
 class PricingModel(BaseModel):
     """Defines the cost of tokens for a specific AI model."""
+
     model_id: str
     prompt_token_cost_usd_per_1k: float
     completion_token_cost_usd_per_1k: float
 
+
 class InvoiceRecord(BaseModel):
     organization_id: str
-    billing_period: str # e.g. "2026-07"
+    billing_period: str  # e.g. "2026-07"
     total_usd: float
     line_items: list[dict[str, Any]]
+
 
 class BillingEngine:
     """
     Tracks token consumption, maps it to pricing matrices, and calculates costs.
     Supports organization-level billing and project-level chargebacks.
     """
+
     def __init__(self):
         # In a real app, this would be fetched from the DB/Stripe
         self._pricing_cache: dict[str, PricingModel] = {
-            "gpt-4": PricingModel(model_id="gpt-4", prompt_token_cost_usd_per_1k=0.03, completion_token_cost_usd_per_1k=0.06),
-            "gpt-3.5-turbo": PricingModel(model_id="gpt-3.5-turbo", prompt_token_cost_usd_per_1k=0.0015, completion_token_cost_usd_per_1k=0.002)
+            "gpt-4": PricingModel(
+                model_id="gpt-4",
+                prompt_token_cost_usd_per_1k=0.03,
+                completion_token_cost_usd_per_1k=0.06,
+            ),
+            "gpt-3.5-turbo": PricingModel(
+                model_id="gpt-3.5-turbo",
+                prompt_token_cost_usd_per_1k=0.0015,
+                completion_token_cost_usd_per_1k=0.002,
+            ),
         }
 
     def calculate_cost(self, model_id: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -54,9 +67,9 @@ class BillingEngine:
         return InvoiceRecord(
             organization_id=organization_id,
             billing_period=current_month,
-            total_usd=124.50, # Simulated aggregated cost
+            total_usd=124.50,  # Simulated aggregated cost
             line_items=[
                 {"project": "Prod-App", "model": "gpt-4", "cost_usd": 100.00},
-                {"project": "Dev-App", "model": "gpt-3.5-turbo", "cost_usd": 24.50}
-            ]
+                {"project": "Dev-App", "model": "gpt-3.5-turbo", "cost_usd": 24.50},
+            ],
         )

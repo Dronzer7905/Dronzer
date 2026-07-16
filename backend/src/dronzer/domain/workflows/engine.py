@@ -7,6 +7,7 @@ from dronzer.infrastructure.database.models.workflows.core import ExecutionStatu
 
 logger = structlog.get_logger("dronzer.workflows.engine")
 
+
 class WorkflowEngine:
     """
     The core runtime for Dronzer Workflows.
@@ -16,12 +17,14 @@ class WorkflowEngine:
 
     def __init__(self, db_session: Any = None):
         self.db = db_session
-        self.node_registry = {} # Mappings of string 'type' to actual Node Executor classes
+        self.node_registry = {}  # Mappings of string 'type' to actual Node Executor classes
 
     def register_node_executor(self, node_type: str, executor_class: Any):
         self.node_registry[node_type] = executor_class
 
-    async def execute_workflow(self, execution_id: str, dag_definition: dict, initial_payload: dict):
+    async def execute_workflow(
+        self, execution_id: str, dag_definition: dict, initial_payload: dict
+    ):
         """
         Main entrypoint for a background worker picking up a workflow job.
         """
@@ -69,8 +72,10 @@ class WorkflowEngine:
                     # Node requested Human In The Loop approval
                     logger.info("Workflow paused for Human Approval", node_id=node_id)
                     state["nodes"][node_id] = {"status": "PAUSED"}
-                    await self._save_state(execution_id, state, ExecutionStatus.PAUSED, current_node=node_id)
-                    return # Exit the background worker; waiting for REST API resume call
+                    await self._save_state(
+                        execution_id, state, ExecutionStatus.PAUSED, current_node=node_id
+                    )
+                    return  # Exit the background worker; waiting for REST API resume call
 
                 # Update state with node outputs
                 state["nodes"][node_id] = {"status": "COMPLETED", "outputs": result}
@@ -93,5 +98,7 @@ class WorkflowEngine:
     async def _load_state(self, execution_id: str) -> dict:
         return None
 
-    async def _save_state(self, execution_id: str, state: dict, status: ExecutionStatus, current_node: str = None):
+    async def _save_state(
+        self, execution_id: str, state: dict, status: ExecutionStatus, current_node: str = None
+    ):
         pass

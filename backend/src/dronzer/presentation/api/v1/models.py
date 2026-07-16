@@ -9,6 +9,7 @@ from dronzer.presentation.schemas.openai import ModelCard, ModelListResponse
 logger = structlog.get_logger("dronzer.api.v1.models")
 router = APIRouter(prefix="/models", tags=["Models"])
 
+
 @router.get("", response_model=ModelListResponse)
 async def list_models(request: Request):
     """
@@ -24,21 +25,20 @@ async def list_models(request: Request):
 
     for provider in registry.get_all():
         # Fake cards for demonstration of gateway routing capabilities
-        cards.append(ModelCard(
-            id=f"{provider.provider_name}-default",
-            created=int(time.time()),
-            owned_by=provider.provider_name
-        ))
+        cards.append(
+            ModelCard(
+                id=f"{provider.provider_name}-default",
+                created=int(time.time()),
+                owned_by=provider.provider_name,
+            )
+        )
 
     return ModelListResponse(data=cards)
+
 
 @router.get("/{model_id}", response_model=ModelCard)
 async def get_model(request: Request, model_id: str):
     """
     OpenAI-compatible /v1/models/{model_id} endpoint.
     """
-    return ModelCard(
-        id=model_id,
-        created=int(time.time()),
-        owned_by="dronzer-gateway"
-    )
+    return ModelCard(id=model_id, created=int(time.time()), owned_by="dronzer-gateway")
