@@ -116,7 +116,12 @@ async function request<T>(
   // Ensure base doesn't end with slash and path doesn't start with slash
   const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-  const url = new URL(`${cleanBase}/${cleanPath}`);
+  const urlStr = cleanBase ? `${cleanBase}/${cleanPath}` : `/${cleanPath}`;
+
+  const fallbackBase = typeof window === "undefined" ? "http://127.0.0.1:8000" : window.location.origin;
+  const url = urlStr.startsWith("/") 
+    ? new URL(urlStr, fallbackBase)
+    : new URL(urlStr);
 
   // Append query params
   if (opts?.params) {
@@ -172,7 +177,12 @@ export async function streamRequest(
 ): Promise<ReadableStream<Uint8Array>> {
   const cleanBase = GATEWAY_BASE.endsWith("/") ? GATEWAY_BASE.slice(0, -1) : GATEWAY_BASE;
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-  const url = new URL(`${cleanBase}/${cleanPath}`);
+  const urlStr = cleanBase ? `${cleanBase}/${cleanPath}` : `/${cleanPath}`;
+
+  const fallbackBase = typeof window === "undefined" ? "http://127.0.0.1:8000" : window.location.origin;
+  const url = urlStr.startsWith("/") 
+    ? new URL(urlStr, fallbackBase)
+    : new URL(urlStr);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
