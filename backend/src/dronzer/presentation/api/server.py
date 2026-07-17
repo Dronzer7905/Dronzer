@@ -40,6 +40,8 @@ def create_app() -> FastAPI:
     register_error_handlers(app)
 
     # Health Endpoints
+    @app.get("/api/v1/health")
+    @app.get("/health")
     @app.get("/health/liveness")
     async def liveness():
         return {"status": "alive"}

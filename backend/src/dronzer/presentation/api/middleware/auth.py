@@ -16,7 +16,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Callable) -> JSONResponse:
         # Skip auth for health/docs and all admin endpoints (they have their own JWT dependency)
-        if request.url.path.startswith(("/health", "/docs", "/openapi.json", "/metrics", "/admin")):
+        if request.url.path.startswith(("/health", "/docs", "/openapi.json", "/metrics", "/admin", "/api/v1/health")):
             return await call_next(request)
 
         auth_header = request.headers.get("Authorization")
