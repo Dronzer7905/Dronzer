@@ -28,9 +28,15 @@ def create_app() -> FastAPI:
     app.add_middleware(RateLimitMiddleware, max_requests=1000, window_seconds=60)
     app.add_middleware(ObservabilityMiddleware)
 
+    import os
+    cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",")
+    # If the user sets CORS_ORIGINS=*, we can allow all origins.
+    if "*" in cors_origins:
+        cors_origins = ["*"]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_origins=cors_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["*"],
