@@ -44,6 +44,9 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_production_secrets(self) -> "Settings":
+        if self.DATABASE_URL.startswith("postgresql://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
         if self.ENVIRONMENT == Environment.PRODUCTION:
             if self.SECRET_KEY == "kR8r_7qHj8tZ1z2wO3c4V5b6N7m8M9l0K1j2H3g4F5E=":
                 raise ValueError(
