@@ -10,9 +10,9 @@ import type { ApiError, SimpleError } from "./types";
 // Configuration
 // ---------------------------------------------------------------------------
 
-const ADMIN_BASE = process.env.NEXT_PUBLIC_ADMIN_API_URL ?? "http://localhost:8000/admin";
-const GATEWAY_BASE = process.env.NEXT_PUBLIC_GATEWAY_API_URL ?? "http://localhost:8000/v1";
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const ADMIN_BASE = process.env.NEXT_PUBLIC_ADMIN_API_URL ?? "/admin";
+const GATEWAY_BASE = process.env.NEXT_PUBLIC_GATEWAY_API_URL ?? "/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 // ---------------------------------------------------------------------------
 // Token helpers — read from Zustand persisted localStorage
